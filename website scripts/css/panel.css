@@ -1,0 +1,556 @@
+/* =========================================================
+   Stitchline Interactive — staff panel
+   Login wizard + authenticated app shell
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   Login wizard
+   --------------------------------------------------------- */
+.wizard {
+  position: relative;
+  width: min(460px, 100%);
+  margin: 0 auto;
+  padding: 2rem 2rem 1.9rem;
+  background: var(--panel-solid);
+  border: 1px solid var(--line-strong);
+  border-radius: calc(var(--rad) + 6px);
+  box-shadow: 0 50px 100px -50px #000;
+  overflow: hidden;
+}
+/* A short accent that fades out at both ends. A full-width gradient bar read as
+   a glitch tear across the card rather than a deliberate edge. */
+.wizard::before {
+  content: ""; position: absolute; top: 0; left: 50%; height: 1px;
+  width: 46%; transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, var(--ink), transparent);
+  opacity: 0.6;
+}
+.wizard__mark {
+  /* span defaults to inline, and width/height do not apply to inline boxes -
+     without this the logo rendered at the image's natural 301x327. */
+  display: block;
+  width: 44px; height: 44px; margin: 0 auto 1rem;
+  will-change: transform;
+  animation: cubeSpin 16s linear infinite;
+}
+.wizard__mark img { width: 100%; height: 100%; object-fit: contain; }
+/* The glitch wrapper is inline-block so its RGB-split copies hug the text.
+   Putting data-glitch on the <h1> itself made the heading shrink-to-fit and
+   left-align inside an otherwise centred card, so the attribute lives on an
+   inner span and the heading stays a centred block. */
+.wizard__title {
+  font-size: 1.3rem; text-align: center; letter-spacing: 0.04em;
+}
+.wizard__title > span { display: inline-block; }
+.wizard__sub {
+  margin: 0.45rem auto 1.5rem; max-width: 40ch;
+  text-align: center; font-size: 0.8rem; color: var(--text-dim);
+}
+
+/* An <ol> carries default list markers and padding. The markers rendered as
+   stray "1." "2." "3." next to every label, and the padding pushed the whole
+   row off-centre, so both have to be cleared explicitly. */
+.steps {
+  display: flex; align-items: flex-start; gap: 0.3rem;
+  margin: 0 0 1.4rem; padding: 0;
+  list-style: none;
+}
+.steps__item {
+  flex: 1; display: grid; gap: 0.45rem; justify-items: center;
+  font-family: var(--font-mono); font-size: 0.54rem;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-mute);
+  text-align: center; list-style: none;
+}
+/* Reserve two lines for every label so "Confirm Email" wrapping to two lines
+   does not lift its dot out of line with the other three. */
+.steps__label {
+  min-height: 2.2em; display: flex; align-items: center; justify-content: center;
+  line-height: 1.25;
+}
+.steps__dot {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-2);
+  font-size: 0.66rem; color: var(--text-mute);
+  transition: all 0.3s var(--ease);
+}
+.steps__item.is-done .steps__dot { border-color: var(--ok); color: var(--ok); }
+.steps__item.is-done .steps__dot::after { content: "\2713"; }
+.steps__item.is-done .steps__dot span { display: none; }
+.steps__item.is-active .steps__dot {
+  border-color: var(--ink); color: var(--ink);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+}
+.steps__item.is-active { color: var(--text); }
+.steps__bar {
+  flex: 0 0 14px; height: 1px; align-self: start; margin-top: 13px;
+  background: var(--line-strong); list-style: none;
+}
+
+.wizard__step { display: none; }
+.wizard__step.is-on { display: block; animation: stepIn 0.35s var(--ease); }
+@keyframes stepIn { from { opacity: 0; transform: translateX(14px); } }
+
+.wizard__actions { display: flex; gap: 0.6rem; margin-top: 1.4rem; }
+.wizard__actions .btn { flex: 1; justify-content: center; }
+
+.hint {
+  display: flex; gap: 0.6rem; align-items: flex-start;
+  margin-top: 1rem; padding: 0.8rem 0.95rem;
+  font-size: 0.76rem; line-height: 1.6; color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  border-radius: var(--rad-sm);
+}
+.hint--warn {
+  color: var(--warn);
+  background: rgba(232, 195, 122, 0.06);
+  border-color: rgba(232, 195, 122, 0.28);
+}
+.hint__icon { flex: 0 0 auto; font-family: var(--font-mono); }
+
+.form-error {
+  margin-top: 0.9rem; padding: 0.7rem 0.9rem;
+  font-size: 0.8rem; color: var(--bad);
+  background: rgba(240, 138, 138, 0.08);
+  border: 1px solid rgba(240, 138, 138, 0.3);
+  border-radius: var(--rad-sm);
+}
+.form-error[hidden] { display: none; }
+
+.code-input {
+  width: 100%; padding: 1rem 0.5rem;
+  font-family: var(--font-mono); font-size: 1.7rem;
+  letter-spacing: 0.55em; text-align: center; text-indent: 0.55em;
+  color: var(--ink); background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line-strong); border-radius: var(--rad-sm);
+  outline: none;
+}
+.code-input:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1); }
+
+.check {
+  display: flex; gap: 0.6rem; align-items: flex-start;
+  font-size: 0.84rem; color: var(--text-dim); cursor: pointer;
+}
+.check input { margin-top: 3px; accent-color: #ffffff; width: 15px; height: 15px; }
+
+.alt {
+  display: block; margin-top: 1.2rem; text-align: center;
+  font-family: var(--font-mono); font-size: 0.66rem;
+  letter-spacing: 0.14em; color: var(--text-mute);
+}
+.alt button { color: var(--text-dim); border-bottom: 1px solid var(--line-strong); transition: color 0.2s, border-color 0.2s; }
+.alt button:hover { color: var(--ink); border-color: var(--ink); }
+
+.meter { height: 3px; border-radius: 2px; background: rgba(255, 255, 255, 0.1); overflow: hidden; margin-top: 0.5rem; }
+.meter i { display: block; height: 100%; background: var(--ink); transition: width 0.4s var(--ease); }
+
+.lockout {
+  margin-top: 1rem; padding: 0.7rem 0.9rem;
+  font-size: 0.78rem; color: var(--warn);
+  border: 1px solid rgba(232, 195, 122, 0.3);
+  background: rgba(232, 195, 122, 0.06);
+  border-radius: var(--rad-sm);
+}
+
+/* ---------------------------------------------------------
+   App shell
+   --------------------------------------------------------- */
+/* The shell is one screen with two scrollers inside it, not a page that
+   scrolls. With 36 destinations the sidebar is taller than any viewport, and
+   letting the document scroll meant the navigation walked off the top of the
+   screen while you were reading a section - you had to scroll back up to go
+   somewhere else. Locked to the viewport, the sidebar and the content each
+   scroll on their own and the header stays put.
+
+   100dvh rather than 100vh: on a phone the browser's chrome shrinks the
+   visible area, and a shell sized to 100vh puts the bottom of the sidebar
+   under the URL bar. The vh line stays for anything that cannot parse dvh. */
+.app {
+  display: none;
+  height: 100vh;
+  height: 100dvh;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+.app.is-on { display: grid; }
+
+/* Already 92% opaque, so the 14px backdrop blur was barely visible but ran on
+   every frame the panel scrolled. */
+.app__top {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; gap: 1rem;
+  padding: 0.7rem clamp(0.9rem, 2.5vw, 1.6rem);
+  background: rgba(0, 0, 0, 0.96);
+  border-bottom: 1px solid var(--line);
+}
+.app__logo { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
+.app__logo .cube {
+  display: block;
+  width: 26px; height: 26px;
+  will-change: transform;
+  animation: cubeSpin 18s linear infinite;
+}
+.app__logo .cube img { width: 100%; height: 100%; object-fit: contain; }
+.app__logo b { font-family: var(--font-display); font-size: 0.95rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.app__logo small {
+  display: block; font-family: var(--font-mono); font-size: 0.52rem;
+  letter-spacing: 0.28em; text-transform: uppercase; color: var(--text-mute);
+}
+.app__spacer { flex: 1; }
+
+.app__search {
+  width: min(320px, 40vw);
+  padding: 0.45rem 0.8rem;
+  font-size: 0.82rem; color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line); border-radius: 999px;
+  outline: none;
+}
+.app__search:focus { border-color: var(--ink); }
+
+.who {
+  display: flex; align-items: center; gap: 0.55rem;
+  padding: 0.3rem 0.4rem 0.3rem 0.75rem;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.who__name { font-family: var(--font-display); font-size: 0.82rem; }
+.who__rank {
+  font-family: var(--font-mono); font-size: 0.54rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text-dim);
+}
+.who__pfp {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--bg-3); border: 1px solid var(--line-strong);
+  display: grid; place-items: center; overflow: hidden;
+  font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-mute);
+}
+.who__pfp img { width: 100%; height: 100%; object-fit: cover; }
+.who__out {
+  font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.14em;
+  color: var(--text-mute); padding: 0.3rem 0.5rem; border-radius: 999px;
+  transition: color 0.2s, background 0.2s;
+}
+.who__out:hover { color: #000; background: var(--ink); }
+
+/* minmax(0, 1fr) and not 1fr: a grid row sized 1fr is still allowed to grow
+   past its share when its content is taller, which is what let the sidebar push
+   the document taller than the viewport again. */
+.app__body { display: grid; grid-template-columns: 268px 1fr; min-height: 0; overflow: hidden; }
+
+.side {
+  border-right: 1px solid var(--line);
+  padding: 1rem 0.7rem 2rem;
+  background: rgba(4, 4, 4, 0.6);
+  overflow-y: auto;
+  /* contain stops the sidebar reaching the end of its list and handing the
+     gesture to the page behind it, and the reserved gutter keeps the canvas the
+     same width whether or not the sidebar happens to have a scrollbar. */
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.side__group { margin-bottom: 0.15rem; }
+.side__top {
+  display: flex; align-items: center; gap: 0.6rem;
+  width: 100%; padding: 0.6rem 0.7rem;
+  border-radius: var(--rad-sm);
+  font-family: var(--font-display); font-size: 0.9rem; font-weight: 600;
+  color: var(--text-dim); text-align: left;
+  transition: color 0.2s, background 0.2s;
+}
+.side__top:hover { color: var(--ink); background: rgba(255, 255, 255, 0.04); }
+.side__top.is-on { color: var(--ink); background: rgba(255, 255, 255, 0.07); }
+.side__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink); flex: 0 0 auto; }
+.side__dot--off { background: var(--text-mute); }
+
+/* Subsections are always visible navigation, not disclosure, so the list is
+   open by default and never collapses. */
+.side__subs { display: block; padding: 0.1rem 0 0.3rem 0.9rem; margin-left: 0.85rem; border-left: 1px solid var(--line); }
+.side__sub {
+  display: flex; align-items: center; gap: 0.5rem;
+  width: 100%; padding: 0.42rem 0.6rem; border-radius: 6px;
+  font-size: 0.8rem; color: var(--text-dim); text-align: left;
+  transition: color 0.2s, background 0.2s;
+}
+.side__sub:hover { color: var(--ink); background: rgba(255, 255, 255, 0.05); }
+.side__sub.is-on { color: var(--ink); background: rgba(255, 255, 255, 0.08); }
+.side__tag {
+  margin-left: auto; font-family: var(--font-mono); font-size: 0.5rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.1rem 0.35rem; border-radius: 999px;
+  border: 1px solid var(--line-strong); color: var(--text-mute);
+}
+.side__tag--new { border-color: var(--ink); color: var(--ink); }
+
+/* The other half of the two scrollers. Padding is a border box now, so it does
+   not vanish as content scrolls under it, and overscroll containment keeps the
+   gesture inside the panel. */
+.canvas {
+  padding: clamp(1.1rem, 2.6vw, 2rem);
+  min-width: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  /* Smooth scrolling would fight the instant reset in navigate(), which is what
+     puts a new section at its own top rather than halfway down. */
+  scroll-behavior: auto;
+}
+
+.crumbs {
+  display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--text-mute);
+  margin-bottom: 0.5rem;
+}
+.crumbs b { color: var(--text-dim); font-weight: 400; }
+.crumbs span { opacity: 0.5; }
+
+.page__title {
+  font-size: clamp(1.4rem, 3vw, 1.95rem); margin-bottom: 0.4rem;
+}
+.page__desc { font-size: 0.88rem; color: var(--text-dim); max-width: 72ch; }
+
+/* ---------------------------------------------------------
+   Panel content blocks
+   --------------------------------------------------------- */
+.grid { display: grid; gap: 0.9rem; }
+.grid--4 { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.grid--2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+
+.stat {
+  position: relative; padding: 1.1rem 1.15rem;
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--rad); overflow: hidden;
+}
+.stat::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 2px; background: var(--ink); }
+.stat__k {
+  font-family: var(--font-mono); font-size: 0.58rem;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-mute);
+}
+.stat__v {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 1.75rem; line-height: 1.15; margin-top: 0.3rem;
+}
+.stat__n { font-size: 0.72rem; color: var(--text-mute); margin-top: 0.15rem; }
+.stat--good .stat__v { color: var(--ok); }
+.stat--bad .stat__v { color: var(--bad); }
+.stat--warn .stat__v { color: var(--warn); }
+
+.box {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--rad); overflow: hidden;
+}
+.box__head {
+  display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+}
+.box__head h3 { font-size: 0.98rem; }
+.box__head .btn { margin-left: auto; }
+.box__body { padding: 1.1rem; }
+.box__body--flush { padding: 0; }
+
+.table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.83rem; }
+.table th {
+  position: sticky; top: 0; z-index: 2;
+  padding: 0.65rem 1rem; text-align: left;
+  font-family: var(--font-mono); font-size: 0.56rem;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-mute);
+  /* A separate border model so a sticky header can carry a background and a
+     hairline of its own. With border-collapse the header's border scrolls away
+     with the cell and the column titles arrive over the rows as a transparent
+     strip, which is the thing that makes a long table unreadable. */
+  background: var(--panel-solid);
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.table td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--line-soft); vertical-align: middle; }
+.table tr:last-child td { border-bottom: 0; }
+.table tbody tr { transition: background 0.2s; }
+.table tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+.table__id { font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink); }
+.table__actions { display: flex; gap: 0.35rem; justify-content: flex-end; }
+/* An id, a reference or a timestamp is one token. Left to wrap, a column of
+   timestamps breaks across two lines - "2026-09-20" over "14:00:00" - and a
+   column of references breaks after the hyphen, so the table reads as noise.
+   The flexible column is the one with prose in it, and the region scrolls
+   sideways if even that is not enough. */
+.table td.mono, .table th.mono,
+.table td .mono, .table td .pill { white-space: nowrap; }
+.table-scroll { max-height: min(58vh, 620px); overflow: auto; overscroll-behavior: contain; }
+.table-scroll .table th { background: var(--panel); }
+
+.pill {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.2rem 0.6rem; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 0.56rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  border: 1px solid var(--line-strong); color: var(--text-dim);
+  white-space: nowrap;
+}
+.pill--live { border-color: rgba(127, 224, 168, 0.5); color: var(--ok); }
+.pill--off { border-color: var(--line); color: var(--text-mute); }
+.pill--warn { border-color: rgba(232, 195, 122, 0.45); color: var(--warn); }
+.pill--cyan { border-color: var(--line-strong); color: var(--ink); }
+
+.mini {
+  padding: 0.3rem 0.65rem;
+  font-family: var(--font-mono); font-size: 0.58rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  border: 1px solid var(--line-strong); border-radius: 6px;
+  color: var(--text-dim);
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.mini:hover { color: #000; border-color: var(--ink); background: var(--ink); }
+.mini--bad:hover { color: #000; border-color: var(--bad); background: var(--bad); }
+.mini:disabled { opacity: 0.4; pointer-events: none; }
+
+/* The empty state is .empty-note, defined in base.css. This file used to carry a
+   second, slightly different copy under the name .empty - nineteen hand-written
+   blocks in panel.js against nine in site.js, and the two did not match. The
+   panel's call sites now use the one component, so there is nothing left here to
+   override. */
+
+.needs-bot {
+  display: grid; gap: 0.7rem; padding: 1.6rem;
+  text-align: left; border: 1px dashed var(--line-strong);
+  border-radius: var(--rad); background: rgba(255, 255, 255, 0.03);
+}
+.needs-bot__code {
+  font-family: var(--font-mono); font-size: 0.64rem; color: var(--warn);
+  letter-spacing: 0.1em;
+}
+
+.kv { display: grid; grid-template-columns: minmax(120px, auto) 1fr; gap: 0.5rem 1rem; font-size: 0.83rem; }
+.kv dt { font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-mute); padding-top: 2px; }
+.kv dd { color: var(--text-dim); word-break: break-word; }
+
+.cmd-list { display: grid; gap: 0.35rem; }
+.cmd {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.5rem 0.7rem; border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line);
+  font-family: var(--font-mono); font-size: 0.76rem;
+}
+.cmd b { color: var(--ink); font-weight: 400; }
+.cmd span { margin-left: auto; color: var(--text-mute); font-size: 0.64rem; }
+
+/* A filter row above a table. Not used yet: the views that would carry one
+   (Staff List, Discounts) currently show every row. Kept because it is the
+   obvious next addition, and it is commented so it is not mistaken for a rule
+   something depends on. */
+/* .toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 1rem; }
+.toolbar input[type="search"], .toolbar input[type="text"], .toolbar select {
+  padding: 0.45rem 0.75rem; font-size: 0.8rem;
+  color: var(--text); background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line); border-radius: var(--rad-sm);
+  outline: none;
+}
+.toolbar input:focus, .toolbar select:focus { border-color: var(--ink); }
+.toolbar .spacer { flex: 1; } */
+
+.chatbox {
+  display: grid; gap: 0.7rem;
+  height: min(58vh, 520px); overflow-y: auto;
+  padding: 1rem; background: rgba(4, 4, 4, 0.6);
+  border: 1px solid var(--line); border-radius: var(--rad);
+}
+.msg {
+  max-width: 82%; padding: 0.7rem 0.9rem;
+  background: var(--panel-solid); border: 1px solid var(--line);
+  border-radius: 12px; border-top-left-radius: 3px;
+}
+.msg--me { margin-left: auto; border-top-left-radius: 12px; border-top-right-radius: 3px; border-color: var(--line-strong); background: rgba(255, 255, 255, 0.06); }
+.msg__who { display: flex; align-items: center; gap: 0.45rem; font-family: var(--font-display); font-size: 0.76rem; }
+.msg__who small { font-family: var(--font-mono); font-size: 0.54rem; color: var(--text-mute); }
+.msg__text { margin-top: 0.3rem; font-size: 0.86rem; color: var(--text-dim); white-space: pre-wrap; }
+.msg__time { margin-top: 0.35rem; font-family: var(--font-mono); font-size: 0.54rem; color: var(--text-mute); }
+
+/* ---------------------------------------------------------
+   Direct messages + AI chat
+   --------------------------------------------------------- */
+.chat-layout {
+  display: grid; gap: 1rem;
+  grid-template-columns: minmax(210px, 260px) 1fr;
+  align-items: start;
+}
+.chat-list {
+  border: 1px solid var(--line); border-radius: var(--rad);
+  background: var(--panel); overflow: hidden;
+}
+.chat-list__head {
+  padding: 0.6rem 0.85rem;
+  font-family: var(--font-mono); font-size: 0.56rem;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-mute);
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--line);
+}
+.chat-list__head + .chat-item { border-top: 0; }
+.chat-list__empty { padding: 0.9rem 0.85rem; font-size: 0.78rem; color: var(--text-mute); }
+.chat-item {
+  position: relative; display: grid; gap: 0.15rem;
+  width: 100%; padding: 0.65rem 0.85rem; text-align: left;
+  border-bottom: 1px solid var(--line-soft);
+  transition: background 0.2s;
+}
+.chat-item:hover { background: rgba(255, 255, 255, 0.04); }
+/* "Start one" entries sit under an existing conversation but are not one.
+   Without a rule the two groups are indistinguishable, and the list reads as
+   if those people already had a thread going. */
+.chat-item--new { border-bottom-color: transparent; }
+.chat-item--new .chat-item__who { color: var(--ink); }
+.chat-item__who { font-family: var(--font-display); font-size: 0.86rem; }
+.chat-item__preview {
+  font-size: 0.74rem; color: var(--text-mute);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.chat-item .side__tag { position: absolute; top: 0.6rem; right: 0.6rem; margin: 0; }
+
+.chat-main { display: grid; gap: 0.7rem; min-width: 0; }
+.chat-compose { display: flex; gap: 0.5rem; }
+.chat-compose input {
+  flex: 1; padding: 0.7rem 0.9rem;
+  font-size: 0.86rem; color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line); border-radius: var(--rad-sm);
+  outline: none;
+}
+.chat-compose input:focus { border-color: var(--ink); }
+.chat-compose input:disabled { opacity: 0.5; }
+.chat-compose .btn { flex: 0 0 auto; }
+
+.msg__pfp {
+  width: 18px; height: 18px; border-radius: 50%;
+  object-fit: cover; border: 1px solid var(--line-strong);
+}
+/* The AI used to be violet. It is now marked by a dashed ring so the speaker is
+   distinguishable from a person without spending a second hue. */
+.msg--ai .msg__who span { border-bottom: 1px dashed var(--line-strong); }
+.msg--bad { border-color: rgba(240, 138, 138, 0.4); }
+.msg--bad .msg__text { color: var(--bad); }
+
+@media (max-width: 760px) {
+  .chat-layout { grid-template-columns: 1fr; }
+  .chat-list { max-height: 220px; overflow-y: auto; }
+}
+
+@media (max-width: 900px) {
+  .app__body { grid-template-columns: 1fr; }
+  /* The sidebar is a drawer over the content on a narrow screen, so it is sized
+     to the viewport and scrolls itself; the canvas underneath keeps the other
+     scroller. Both are independently scrollable, which is the same arrangement
+     as the two-column layout rather than a special case for small screens. */
+  .side {
+    position: fixed; inset: 60px 0 0 0; z-index: 35;
+    background: rgba(0, 0, 0, 0.98);
+    transform: translateX(-100%);
+    transition: transform 0.3s var(--ease);
+    overscroll-behavior: contain;
+  }
+  .side.is-open { transform: none; }
+  .app__menu { display: grid !important; }
+  .app__search { display: none; }
+}
+.app__menu { display: none; width: 34px; height: 30px; place-items: center; }

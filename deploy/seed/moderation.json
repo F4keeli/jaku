@@ -1,0 +1,25 @@
+{
+  "records": {
+    "cases": [],
+    "actions": [],
+    "messages": [],
+    "server": [],
+    "tickets": [],
+    "giveaways": [],
+    "events": [],
+    "tasks": [],
+    "submissions": []
+  },
+  "settings": {
+    "log_channels": [],
+    "action_log_channel": "",
+    "ticket_panel_channel": "",
+    "ticket_category": "",
+    "ticket_role": "",
+    "staff_role": "",
+    "mute_role": "",
+    "guilds": [],
+    "message_excerpt": 280,
+    "message_retention_days": 30
+  }
+}

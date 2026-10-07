@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Store — Stitchline Interactive</title>
+<meta name="description" content="Stitchline Interactive — independent game development studio.">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="/assets/logo-boxed.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/website%20scripts/css/base.css">
+<link rel="stylesheet" href="/website%20scripts/css/pages.css">
+</head>
+<body data-page="store">
+
+<div class="fx-noise" aria-hidden="true"></div>
+<div class="fx-scanlines" aria-hidden="true"></div>
+<div class="fx-grid" aria-hidden="true"></div>
+<div class="fx-vignette" aria-hidden="true"></div>
+
+<div class="cursor" id="cursor" aria-hidden="true">
+  <span class="cursor__cube"><img src="/assets/Cube.png" alt=""></span>
+  <span class="cursor__dot"></span>
+</div>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="header is-stuck" id="header">
+  <div class="header__inner">
+    <a class="brand" href="/" aria-label="Stitchline Interactive home">
+      <span class="brand__cube"><img src="/assets/Cube.png" alt=""></span>
+      <span class="brand__text">
+        <span class="brand__name" data-glitch="Stitchline">Stitchline</span>
+        <span class="brand__sub">Interactive</span>
+      </span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Primary">
+      <a class="nav__link" href="/">Home</a>
+      <a class="nav__link" href="/games.html">Games</a>
+      <a class="nav__link" href="/team.html">Team</a>
+      <a class="nav__link" href="/contact.html">Suggestions</a>
+      <a class="nav__link" href="/store.html">Store</a>
+      <a class="nav__link" href="/application.html">Application</a>
+    </nav>
+    <div class="header__side">
+      <div class="socials" id="socials" aria-label="Social links"></div>
+      <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="header__rail" aria-hidden="true"><i id="headerRail"></i></div>
+</header>
+
+<main id="main">
+  <section class="page">
+    <div class="hero__bg" aria-hidden="true">
+      <div class="hero__grid"></div>
+      <div class="hero__glow"></div>
+    </div>
+    <div class="wrap">
+      <div class="page__head">
+        <!-- data-glitch sits on the inner span, not the h1: the glitch rule
+             makes the target inline-block, which would leave the heading
+             shrink-to-fit on the same line as the eyebrow badge. -->
+        <p class="eyebrow"><span class="pulse"></span> Support the studio</p>
+        <h1 class="page__title"><span data-glitch="Store">Store</span></h1>
+        <p class="page__desc">StitchBlocks, supporter roles, and anything else we put up for sale. Every order is tied to a verified Discord account before a payment is taken.</p>
+      </div>
+<div class="page__body">
+        <div id="storeRoot">
+          <div class="tabs" role="tablist">
+            <button class="tab is-on" type="button" data-tab="shop" role="tab">Shop</button>
+            <button class="tab" type="button" data-tab="currency" role="tab">Currency</button>
+            <button class="tab" type="button" data-tab="roles" role="tab">Roles</button>
+          </div>
+          <div class="store-layout">
+            <div>
+              <div class="tabpanel" data-panel="shop">
+                <div class="price-grid" id="shopGrid"></div>
+              </div>
+              <div class="tabpanel" data-panel="currency" hidden>
+                <div class="price-grid" id="currencyGrid"></div>
+              </div>
+              <div class="tabpanel" data-panel="roles" hidden>
+                <div class="price-grid" id="roleGrid"></div>
+              </div>
+              <div class="panel-box" style="margin-top:1.4rem">
+                <div class="panel-box__head"><h2 class="panel-box__title">Your cart</h2></div>
+                <div id="cartLines" class="stack"><p class="muted small">Your cart is empty.</p></div>
+                <div class="cart__total"><span>Total</span><b id="cartTotal">$0.00</b></div>
+                <div class="form-error" id="cartError" hidden></div>
+                <div class="code-box" id="codeBox" hidden>
+                  <div class="code-box__row">
+                    <label class="field" style="margin:0;flex:1">
+                      <span class="field__label">Discount code</span>
+                      <input type="text" id="codeInput" maxlength="40" placeholder="LAUNCH10"
+                        autocomplete="off" spellcheck="false"></label>
+                    <button class="btn btn--ghost" type="button" id="codeApply"><span>Apply</span></button>
+                  </div>
+                  <p class="code-box__status" id="codeStatus"></p>
+                </div>
+                <form id="checkoutForm" novalidate style="margin-top:1rem">
+                  <div id="checkoutFields" class="stack">
+                    <div class="form__row">
+                      <label class="field"><span class="field__label">Discord user ID</span>
+                        <input type="text" name="discord_id" inputmode="numeric" maxlength="24" required>
+                        <span class="field__hint">The long number, not your username. You
+                          <b>Developer Mode &rsaquo; Copy User ID</b> in Discord gives it.</span></label>
+                      <label class="field"><span class="field__label">Discord username</span>
+                        <input type="text" name="discord_name" maxlength="32" autocomplete="off" required></label>
+                    </div>
+                    <label class="field"><span class="field__label">Email</span>
+                      <input type="email" name="email" maxlength="254" autocomplete="email" required>
+                      <span class="field__hint">For the receipt.</span></label>
+                    <div class="tax-box">
+                      <label class="field" style="margin:0;flex:1"><span class="field__label">Postal code</span>
+                        <input type="text" name="postal_code" id="postalInput" maxlength="10"
+                          autocomplete="postal-code" spellcheck="false"
+                          placeholder="11201" aria-describedby="taxNote"></label>
+                      <div class="tax-box__figure">
+                        <span class="tax-box__k">Sales tax</span>
+                        <span class="tax-box__v" id="taxAmount">—</span>
+                      </div>
+                    </div>
+                    <p class="tax-note" id="taxNote">Your postal code sets the sales tax, so
+                      the total below is the amount you will be charged. Nothing is added
+                      without it.</p>
+                    <div class="cart__line cart__line--total" id="taxTotalRow" hidden>
+                      <span>Total with tax</span><span id="taxTotal">$0.00</span>
+                    </div>
+                    <div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+                    <div class="field"><span class="field__label">Payment</span>
+                      <div class="stack" id="payOptions"></div>
+                      <p class="notice" id="payNotice" hidden>No card or PayPal provider is
+                        connected to this server yet, so an order placed with one waits for
+                        staff rather than a payment screen. Nothing is charged automatically
+                        and nothing is lost. CashApp works on its own.</p>
+                    </div>
+                    <div class="human" id="humanBox"></div>
+                  </div>
+                  <div class="row" style="margin-top:1rem">
+                    <button class="btn btn--primary" type="submit" data-busy id="checkoutBtn" disabled>
+                      <span>Continue to payment</span></button>
+                  </div>
+                </form>
+                <div id="orderDone" hidden>
+                  <div class="form-ok">Order <b class="mono" id="orderRef"></b> created for
+                    <b id="orderTotal"></b><span id="orderSave"></span>.</div>
+                  <p class="small muted" id="orderTax" style="margin:.35rem 0 0" hidden></p>
+                  <p class="small muted" id="orderNote" style="margin-top:.6rem"></p>
+                </div>
+              </div>
+            </div>
+            <aside class="cart">
+              <h3 style="font-size:1rem">Before you pay</h3>
+              <ul class="bullets small">
+                <li>Your Discord user ID is checked against your username first.</li>
+                <li>A wrong ID is your responsibility and voids the order.</li>
+                <li>Card and PayPal are handled by the payment provider, never by this server.</li>
+                <li>Keep your order reference. It is how we find your delivery.</li>
+              </ul>
+              <div class="field"><span class="field__label">Look up an order</span>
+                <input type="text" id="lookupRef" placeholder="SI-XXXXXX" maxlength="12"></div>
+              <input type="text" id="lookupId" placeholder="Discord user ID" maxlength="24"
+                style="width:100%;padding:.65rem .8rem;background:rgba(6,9,16,.9);border:1px solid var(--line-strong);border-radius:var(--rad-sm);color:var(--text)">
+              <div class="form-error" id="lookupError" hidden></div>
+              <button class="btn btn--ghost" type="button" id="lookupBtn"><span>Find my order</span></button>
+              <div id="lookupResult" class="small"></div>
+            </aside>
+          </div>
+        </div>
+        </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <div class="footer__brand">
+      <span class="footer__cube"><img src="/assets/Cube.png" alt=""></span>
+      <span class="footer__name" data-glitch="Stitchline Interactive">Stitchline Interactive</span>
+    </div>
+    <p class="footer__copy">&copy; 2026 Stitchline Interactive. All rights reserved.</p>
+    <nav class="footer__links" aria-label="Footer">
+      <button class="footer__link" type="button" data-modal="terms">Terms</button>
+      <button class="footer__link" type="button" data-modal="privacy">Privacy</button>
+      <a class="footer__link" href="/contact.html">Suggestions</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal__backdrop" data-close></div>
+  <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <header class="modal__head">
+      <h3 id="modalTitle">Title</h3>
+      <button class="modal__close" type="button" data-close aria-label="Close">&times;</button>
+    </header>
+    <div class="modal__body" id="modalBody"></div>
+  </div>
+</div>
+
+<script id="site-data" type="application/json">
+{"/api/site": {"studio": {"name": "Stitchline Interactive", "tagline": "Stitchline Interactive is an independent game studio founded and led by Michael, focused on developing high-performance, mechanically precise titles like Beyond Lock. The studio operates under a professional, structured framework utilizing clear developer accountability, milestone-based workflows, and clean technical architecture to deliver polished, competitive multiplayer experiences.", "background": "/assets/logo.png", "cursor": "/assets/Cube.png", "favicon": "/assets/logo-boxed.png"}, "socials": {"discord": "https://discord.gg/eg848X8Hnx", "twitter": "https://x.com/Stitchline_I", "tiktok": "https://www.tiktok.com/@stitchline_interactive?is_from_webapp=1&sender_device=pc", "youtube": "https://www.youtube.com/channel/UClwZgJarkBRdyVjAkVoGr8g"}, "announcements": [], "values": [{"title": "Engineering Responsive Gameplay", "text": "Prioritizing precise hitboxes, clean system architecture, and regional matchmaking over performance-heavy visual clutter."}, {"title": "Delivering High-Performance Titles", "text": "Executing targeted development sprints to launch polished competitive multiplayer games, beginning with Beyond Lock."}, {"title": "Maintaining Professional Standards", "text": "Operating with clear accountability, structured team hierarchies, transparent developer terms, and milestone-based workflows."}], "players": [{"title": "Competitive Depth & Identity", "text": "Players want games that reward individual skill, strategy, and high-stakes plays."}, {"title": "Smooth Performance", "text": "Players want stable frame rates without laggy servers or visual effects that overwhelm gameplay."}, {"title": "Responsive & Fair Combat", "text": "Players expect reliable registration and immediate inputs without sluggish trades or delayed responses."}], "goals": [{"title": "Engineering Responsive Gameplay", "text": "Prioritizing zero-lag regional matchmaking, precise hitboxes, and clean system architecture over performance-heavy visual clutter."}, {"title": "Delivering High-Performance Titles", "text": "Executing targeted development sprints to launch polished competitive multiplayer games, including Beyond Lock."}, {"title": "Maintaining Professional Standards", "text": "Operating with clear accountability, structured team hierarchies, transparent developer terms, and milestone-based workflows to ensure sustainable studio growth."}], "featured": {"slug": "beyond-lock", "title": "Beyond Lock", "status": "In Production", "release_estimate": "TBA", "thumb": "/assets/game-thumb.png", "url": "https://www.roblox.com/games/130113973375124/Beyond-Lock", "discord": "https://discord.gg/SyfWBGuKG", "description": "Beyond Lock is an upcoming action game developed by Stitchline Interactive. Designed with a focus on competitive depth and mechanical responsiveness.", "stats": {"rating": null, "rating_count": null, "active_players": null, "total_visits": null}}, "games": [{"id": "beyond-lock", "title": "Beyond Lock", "status": "In Production", "tags": ["Roblox", "Action", "Competitive"], "thumb": "/assets/game-thumb.png", "url": "https://www.roblox.com/games/130113973375124/Beyond-Lock", "discord": "https://discord.gg/SyfWBGuKG", "release_estimate": "TBA", "featured": true, "description": "Beyond Lock is an upcoming action game developed by Stitchline Interactive. Designed with a focus on competitive depth and mechanical responsiveness.", "plays": null, "sneakpeeks": []}], "team": {"hierarchy": ["Leadership", "Management", "Staff", "Scam Investigation", "Appeals Team", "Partnership", "Content Management", "Development", "Testers", "Voice Actors"], "groups": [{"key": "Leadership", "label": "Leadership", "blurb": "Studio direction and final accountability.", "roles": ["Owner", "Director", "Compliance Officer"], "members": [{"name": "Michael", "title": "Owner", "avatar": "/assets/Michael.jpg", "blurb": "Founder and studio lead.", "discord_id": "201112412492005377", "has_login": false}, {"name": "RubiWisp", "title": "Director", "avatar": "/assets/RubiWisp.png", "blurb": "Studio director.", "discord_id": "286899162639761411", "has_login": false}, {"name": "Literally_blaze", "title": "Compliance Officer", "avatar": "", "blurb": "Supports compliance and studio standards.", "discord_id": "1145805274473574470", "has_login": false}]}, {"key": "Management", "label": "Management", "blurb": "Community, server, and project operations.", "roles": ["Server Management", "Project Management"], "members": [{"name": "💜Kitty💜", "title": "Project Manager", "avatar": "", "blurb": "Coordinates development projects and milestones.", "discord_id": "1151815057546694686", "has_login": false}]}, {"key": "Staff", "label": "Staff", "blurb": "Administration, moderation, support, and staff supervision.", "roles": ["Supervisor Of Staff", "Head Administrator", "Senior Administrator", "Junior Administrator", "Administrator", "Head Moderator", "Senior Moderator", "Junior Moderator", "Moderator", "Trial Moderator", "Support Staff"], "members": []}, {"key": "Scam Investigation", "label": "Scam Investigation", "blurb": "Investigates scam and impersonation reports.", "roles": ["Head Scam Investigator", "Senior Scam Investigator", "Junior Scam Investigator", "Scam investigator"], "members": []}, {"key": "Appeals Team", "label": "Appeals Team", "blurb": "Reviews community and moderation appeals.", "roles": ["Appeals Manager", "Appeals Officer"], "members": []}, {"key": "Partnership", "label": "Partnership", "blurb": "Coordinates studio and community partnerships.", "roles": [], "members": []}, {"key": "Content Management", "label": "Content Management", "blurb": "Plans and publishes studio and community content.", "roles": [], "members": []}, {"key": "Development", "label": "Development", "blurb": "Builds gameplay, systems, and studio tools.", "roles": ["Developer", "Project Management", "Modeler", "Clothing Artist", "Music Artist", "Builder", "Scripter", "Vfx Artist", "Drawing Artist", "Ui Artist", "Gfx Artist", "Sfx Artist", "Animator"], "members": [{"name": "𝕬𝖓𝖌𝖊𝖙𝖔𝖑𝖘", "title": "Modeler", "avatar": "/assets/Ansel.png", "discord_id": "382175364799004673", "has_login": false}, {"name": "assa", "title": "Clothing Artist", "avatar": "/assets/assa.jpg", "discord_id": "1014711412452491346", "has_login": false}, {"name": "Bobbisrex99", "title": "Music Artist", "avatar": "/assets/Bobbisrex99.jpg", "discord_id": "297488161351663616", "has_login": false}, {"name": "Don", "title": "Builder", "avatar": "/assets/Don.jfif", "discord_id": "105105630523609088", "has_login": false}, {"name": "Eli", "title": "Scripter", "avatar": "/assets/Eli.png", "discord_id": "963116717213626479", "has_login": false}, {"name": "ℌ𝔲𝔫𝔱𝔢𝔯𝔎𝔦𝔩𝔩𝔢𝔯", "title": "Vfx Artist", "avatar": "/assets/HunterKiller.png", "discord_id": "1193893544792948818", "has_login": false}, {"name": "Izuna", "title": "Drawing Artist", "avatar": "/assets/Izuna.png", "discord_id": "745696947255509142", "has_login": false}, {"name": "kiel", "title": "Vfx Artist", "avatar": "", "discord_id": "955702717815341106", "has_login": false}, {"name": "Monkey?", "title": "Ui Artist", "avatar": "", "discord_id": "757631816093139076", "has_login": false}, {"name": "PrismWorks", "title": "Gfx Artist", "avatar": "", "discord_id": "1175435363867705414", "has_login": false}, {"name": "Sou", "title": "Sfx Artist", "avatar": "", "discord_id": "1126274493497745442", "has_login": false}, {"name": "Vexmex", "title": "Animator", "avatar": "/assets/Vexmex.png", "discord_id": "1161763985188720681", "has_login": false}]}, {"key": "Testers", "label": "Testers", "blurb": "Tests builds and reports gameplay issues.", "roles": ["Tester"], "members": [{"name": "exquasia", "title": "", "avatar": "", "discord_id": "716774610460213318", "has_login": false}, {"name": "kebel", "title": "", "avatar": "", "discord_id": "1520327465287946322", "has_login": false}, {"name": "Luffy", "title": "", "avatar": "", "discord_id": "1263830488037199961", "has_login": false}, {"name": "Mido", "title": "", "avatar": "", "discord_id": "812256969720332288", "has_login": false}, {"name": "Riley", "title": "", "avatar": "", "discord_id": "1230286256324481025", "has_login": false}, {"name": "Rng-king", "title": "", "avatar": "/assets/Rng.jpg", "blurb": "\"Sometimes luck is all we have\" - Rng", "discord_id": "772447877032837160", "has_login": false}, {"name": "Unt835", "title": "", "avatar": "", "discord_id": "1448708677954437283", "has_login": false}, {"name": "Xūrına", "title": "", "avatar": "", "discord_id": "776160317574479873", "has_login": false}]}, {"key": "Voice Actors", "label": "Voice Actors", "blurb": "Provides voice performance for studio projects.", "roles": ["Voice Actor"], "members": []}], "founders": [{"name": "Michael", "title": "Owner", "avatar": "/assets/Michael.jpg", "discord_id": "201112412492005377", "blurb": "Founder and studio lead."}, {"name": "RubiWisp", "title": "Director", "avatar": "/assets/RubiWisp.png", "discord_id": "286899162639761411", "blurb": "Studio director."}], "credit_roles": [{"key": "developers", "label": "Developers"}, {"key": "project_managers", "label": "Project Managers"}, {"key": "testers", "label": "Testers"}, {"key": "voice_actors", "label": "Voice Actors"}], "credits": [{"game": "Beyond Lock", "developers": [], "project_managers": [], "testers": [], "voice_actors": []}]}, "discord": {"guilds": [], "note": "Add the studio Discord server IDs in the panel to enable live counts."}, "store": {"stitchblocks_per_usd": 0.006, "currency": {"name": "StitchBlocks", "icon": "/assets/Cube.png", "bundles": [{"id": "sb-500", "amount": 500, "price": 2.99}, {"id": "sb-1000", "amount": 1000, "price": 5.99}, {"id": "sb-2000", "amount": 2000, "price": 11.99}, {"id": "sb-5000", "amount": 5000, "price": 29.99}, {"id": "sb-10000", "amount": 10000, "price": 59.99}], "custom": {"id": "sb-custom", "enabled": true, "price_per_unit": 0.006, "min_amount": 1, "note": "Custom amounts may not duplicate a bundle above."}}, "roles": [{"id": "bl-premium", "name": "Beyond Lock Premium", "price": 7.99, "custom": false, "blocks": 1000, "blurb": "Server role with premium chat colour and priority queue access."}, {"id": "bl-vip", "name": "Beyond Lock VIP", "price": 12.99, "custom": false, "blocks": 2000, "blurb": "Premium benefits, VIP channels, and early test builds."}, {"id": "bl-supporter", "name": "Beyond Lock Supporter", "price": null, "custom": true, "blurb": "Support the project with an amount confirmed by staff."}], "payments": {"providers": ["stripe"], "manual_review": [], "note": "Stripe Checkout shows every eligible payment method enabled in the Stripe Dashboard.", "require_discord_id": true, "liability_note": "Verify your Discord user ID before purchasing."}, "discounts": [{"id": "launch-10", "code": "LAUNCH10", "kind": "percent", "value": 10, "min_subtotal": 0, "max_uses": 100, "used": 0, "expires": "", "active": true, "note": "Ten percent off your order."}, {"id": "welcome-5", "code": "WELCOME5", "kind": "fixed", "value": 5, "min_subtotal": 10, "max_uses": 0, "used": 0, "expires": "", "active": true, "note": "Five dollars off orders over ten dollars."}], "shop": []}, "contact": {"email": "support@stitchlineinteractivegames.com", "inbox": "support@stitchlineinteractivegames.com", "topics": [{"id": "partnership", "label": "Partnerships"}, {"id": "feedback", "label": "Game feedback"}, {"id": "general", "label": "General inquiries"}, {"id": "appeal", "label": "Community / moderation appeals"}, {"id": "store", "label": "Merchandise & store support"}]}, "applications": [{"id": "community-moderator", "role": "Community Moderator", "summary": "Help keep the Stitchline community respectful, organized, and welcoming.", "responsibilities": ["Review reports and respond consistently", "Apply community rules fairly", "Escalate serious issues to senior staff", "Welcome members and help maintain the server"], "requirements": ["Communicate clearly and calmly", "Be dependable and available for scheduled staff activity", "Follow staff terms and escalation procedures"], "open": true, "closes_at": "", "questions": [{"id": "availability", "label": "What is your weekly availability?", "type": "textarea", "required": true}, {"id": "experience", "label": "Describe any moderation or community experience.", "type": "textarea", "required": true}, {"id": "scenario", "label": "How would you handle a heated disagreement between members?", "type": "textarea", "required": true}]}, {"id": "developer", "role": "Developer", "summary": "Contribute to Beyond Lock and the systems that support responsive multiplayer gameplay.", "responsibilities": ["Build and maintain gameplay systems", "Profile and improve performance and netcode", "Document work and communicate progress"], "requirements": ["Experience with Luau or a relevant production language", "Understanding of multiplayer game systems", "Ability to collaborate through milestone-based work"], "open": false, "closes_at": "", "questions": [{"id": "portfolio", "label": "Share examples of relevant work or a portfolio.", "type": "url", "required": false}, {"id": "stack", "label": "Which languages, tools, and game systems have you worked with?", "type": "textarea", "required": true}, {"id": "interest", "label": "What would you contribute to Beyond Lock?", "type": "textarea", "required": true}]}], "stats": {"games": 1, "games_in_production": 1, "team_members": 0, "team_total": 24, "site_visits": 0}, "community": {"source": "config", "total": 0, "online": 0, "guilds": [], "error": "DISCORD_BOT_TOKEN is not set, so live counts are unavailable."}, "announcement_ttl_days": 14}, "/api/store": {"currency": {"name": "StitchBlocks", "icon": "/assets/Cube.png", "bundles": [{"id": "sb-500", "amount": 500, "price": 2.99}, {"id": "sb-1000", "amount": 1000, "price": 5.99}, {"id": "sb-2000", "amount": 2000, "price": 11.99}, {"id": "sb-5000", "amount": 5000, "price": 29.99}, {"id": "sb-10000", "amount": 10000, "price": 59.99}], "custom": {"id": "sb-custom", "enabled": true, "price_per_unit": 0.006, "min": 1, "max": 1000000, "note": "Custom amounts may not duplicate a bundle above."}}, "roles": [{"id": "bl-premium", "name": "Beyond Lock Premium", "price": 7.99, "custom": false, "blurb": "Server role with premium chat colour and priority queue access."}, {"id": "bl-vip", "name": "Beyond Lock VIP", "price": 12.99, "custom": false, "blurb": "Everything in Premium, plus VIP channels and early test builds."}, {"id": "bl-supporter", "name": "Beyond Lock Supporter", "price": null, "custom": true, "blurb": "Donator role. The amount is entered by the buyer and confirmed by staff."}], "shop": [], "payments": {"providers": ["card", "cashapp"], "manual_review": [], "note": "Card and optional Cash App Pay checkout are handled by one Stripe account.", "liability_note": "The buyer is liable for a wrong Discord user ID. It is verified against the Discord account before a payment is created.", "require_discord_id": true}, "has_discounts": true, "provider_availability": {"card": {"available": true, "instant": false, "kind": "hosted", "reason": "Card payments are not set up on this server. An order can still be placed and staff will take the payment."}, "cashapp": {"available": true, "instant": false, "kind": "hosted", "reason": "Card payments are not set up on this server. An order can still be placed and staff will take the payment."}}, "providers_configured": {"paypal": false, "stripe": false, "stripe_key_present": false, "stripe_webhook_present": false, "public_url_present": false}, "stripe_blocked": "Card payments are not set up on this server."}, "/api/applications": {"roles": [{"id": "community-moderator", "role": "Community Moderator", "summary": "Keep the Discord calm and readable. You would handle reports, enforce the code of conduct, and be the first voice people hear when something goes wrong.", "responsibilities": ["Review reports and act on them consistently", "Enforce the code of conduct and the studio terms", "Escalate anything serious to a staff member", "Welcome new members and keep the server tidy"], "requirements": ["At least 16 years old", "Can commit a few hours a week, evenings included", "Calm and fair under pressure", "Able to write clearly in English"], "open": true, "closed_reason": null, "closes_at": null, "applicants": 0, "questions": [{"id": "availability", "label": "How many hours a week can you give this role?", "type": "text", "required": true, "hint": null, "options": []}, {"id": "why", "label": "Why do you want this role, and what would you change about our server?", "type": "textarea", "required": true, "hint": null, "options": []}, {"id": "experience", "label": "Have you moderated anywhere before? Tell us what you did.", "type": "textarea", "required": false, "hint": "Not required if you have not.", "options": []}]}, {"id": "developer", "role": "Developer", "summary": "Build and tune the systems behind our games: netcode, gameplay, and the tools that keep releases smooth.", "responsibilities": ["Ship and maintain gameplay systems", "Profile and fix performance and netcode issues", "Write down what you build so others can pick it up"], "requirements": ["Can write Lua, Luau, or another language we use in production", "Understand how a multiplayer game actually flows", "Communicate progress honestly, including when something is blocked"], "open": false, "closed_reason": "This role is not accepting applications.", "closes_at": null, "applicants": 0, "questions": [{"id": "stack", "label": "Which languages and engines have you shipped in?", "type": "textarea", "required": true, "hint": null, "options": []}, {"id": "interest", "label": "What would you want to work on here?", "type": "textarea", "required": true, "hint": null, "options": []}]}]}}
+</script>
+<script src="/website%20scripts/js/fx.js"></script>
+<script src="/website%20scripts/js/cursor.js"></script>
+<script src="/website%20scripts/js/nav.js"></script>
+<script src="/website%20scripts/js/site.js"></script>
+<script src="/website%20scripts/js/main.js"></script>
+</body>
+</html>

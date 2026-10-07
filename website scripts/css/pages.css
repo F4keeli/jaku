@@ -1,0 +1,633 @@
+/* =========================================================
+   Stitchline Interactive — Sections 3 to 6
+   Games, Team, Contact, Applications, Store
+   Shares base.css for tokens, header, footer, cards and fx.
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   Shared page shell
+   --------------------------------------------------------- */
+.page {
+  min-height: 100svh;
+  /* The header is fixed, so the top padding has to clear it. 8.5rem put the
+     eyebrow badge right against the header's bottom border. */
+  padding: 10rem 0 5rem;
+  position: relative;
+}
+/* Explicit layering: the decorative hero background is positioned at z-index 0,
+   and positioned boxes paint above unpositioned flow content. Without this the
+   glow sat on top of the whole page and blocked every click. */
+.page > .wrap { position: relative; z-index: 1; }
+/* The heading block of a stacked page. 40rem, so the intro inside it lands on
+   the measure without the measure also being the column width - a heading
+   block narrowed to exactly its own text looks cramped rather than set. */
+.page__head {
+  max-width: 40rem;
+  margin-bottom: clamp(2rem, 5vw, 3.2rem);
+}
+.page__title {
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  letter-spacing: -0.02em;
+  margin-top: 1.1rem;
+}
+.page__desc {
+  margin-top: 1.1rem;
+  color: var(--text-dim);
+  font-size: 1rem;
+  max-width: var(--measure);
+}
+.page__bar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem;
+  margin-top: 1.5rem;
+}
+
+/* ---------------------------------------------------------
+   Split pages
+   ---------------------------------------------------------
+   A page whose body is one working thing - a form, a checkout - reads as a form
+   with a page wrapped round it, not as a left-hugging column with an empty
+   right third. The heading moves into a sticky context column beside the work,
+   and the whole thing collapses to one column below 980px.
+
+   Applied per page with a body class rather than by default, because Games and
+   Team are editorial pages where a full-width heading above full-width content
+   is the right composition. */
+.page--split .wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
+}
+.page--split .page__head {
+  max-width: none;
+  margin-bottom: 0;
+  position: sticky;
+  top: 7rem;
+}
+.page--split .page__body { min-width: 0; }
+/* Rhythm between the blocks in a body. Each section's own markup was setting
+   its own top margin - 1.2rem here, 1.4rem there, nothing at all in one place -
+   so a card and the form under it were touching, and a rule that only works
+   where somebody remembered a margin is not a rule. */
+.page__body > * + * { margin-top: var(--s5); }
+
+@media (max-width: 980px) {
+  .page--split .wrap { grid-template-columns: 1fr; gap: 2rem; }
+  .page--split .page__head { position: static; }
+}
+
+/* ---------------------------------------------------------
+   Generic surfaces
+   --------------------------------------------------------- */
+.panel-box {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--rad);
+  padding: 1.6rem 1.6rem 1.7rem;
+}
+.panel-box__head {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+.panel-box__title { font-size: 1.15rem; }
+.panel-box + .panel-box { margin-top: 1.1rem; }
+
+/* The empty state is defined in base.css, because the staff panel loads that
+   and not this file, and a component that only exists on half the site is a
+   component that eventually gets written twice. The grid-span rule stays here:
+   which containers it has to fill is a property of the pages. */
+.grid > .empty-note,
+.price-grid > .empty-note,
+.role-list > .empty-note,
+.card-grid > .empty-note,
+.store-layout > .empty-note { grid-column: 1 / -1; width: 100%; }
+.empty-note--plain { border: 0; background: none; padding: var(--s4) 0; }
+
+.grid { display: grid; gap: 1rem; }
+.grid--2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+/* .stack, .row, .row--between, .muted, .mono, .small, .form__row, .form__note
+   and .notice live in base.css now: the staff panel loads base.css and
+   panel.css but not this file, and it uses all of them. */
+
+/* The roles that exist in a tier. A role somebody holds is set in white and
+   the ones the tier has yet to fill are dim, so a partly-built hierarchy reads
+   as partly built instead of as a flat list of job titles. */
+.roles {
+  display: flex; flex-wrap: wrap; gap: 0.4rem;
+  list-style: none; margin: 0 0 1.1rem; padding: 0;
+}
+.role {
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}
+.role--held { border-color: var(--line-strong); color: var(--ink); }
+
+/* ---------------------------------------------------------
+   Game credits
+   ---------------------------------------------------------
+   A disclosure per game, a group per role inside it. <details> rather than a
+   scripted dropdown: it opens with the keyboard, it works before the scripts
+   run, and it stays open when the network is slow. */
+.credits { margin-top: var(--s8); }
+.credits__list-games { display: grid; gap: 0.7rem; }
+.credits__game {
+  border: 1px solid var(--line);
+  border-radius: var(--rad);
+  background: var(--panel);
+}
+.credits__summary {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.9rem 1.1rem;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--ink);
+}
+.credits__summary::-webkit-details-marker { display: none; }
+/* A chevron that points where the disclosure actually is, rather than an arrow
+   that stays pointing right when the content is already open. */
+.credits__summary::after {
+  content: "›";
+  margin-left: auto;
+  color: var(--text-mute);
+  transition: transform 0.25s var(--ease);
+  display: inline-block;
+}
+.credits__game[open] .credits__summary::after { transform: rotate(90deg); }
+.credits__summary:hover { border-radius: var(--rad); background: rgba(255, 255, 255, 0.03); }
+.credits__body {
+  padding: 0 1.1rem 1.1rem;
+  border-top: 1px solid var(--line-soft);
+  display: grid; gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.credits__group { padding-top: 0.9rem; }
+.credits__group h4 {
+  font-family: var(--font-mono); font-size: 0.58rem;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-mute);
+  margin-bottom: 0.5rem;
+}
+.credits__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.3rem; }
+.credit { font-size: 0.88rem; color: var(--text-dim); }
+
+/* ---------------------------------------------------------
+   Sneak peeks
+   --------------------------------------------------------- */
+.sneaks {
+  margin-top: 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.sneaks__summary {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.6rem 0.85rem;
+  cursor: pointer; list-style: none;
+  font-family: var(--font-mono); font-size: 0.6rem;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim);
+}
+.sneaks__summary::-webkit-details-marker { display: none; }
+.sneaks__summary::after {
+  content: "›"; margin-left: auto; color: var(--text-mute);
+  transition: transform 0.25s var(--ease); display: inline-block;
+}
+.sneaks[open] .sneaks__summary::after { transform: rotate(90deg); }
+.sneaks__list {
+  list-style: none; margin: 0; padding: 0 0.85rem 0.85rem;
+  display: grid; gap: 0.3rem;
+}
+.sneak__link {
+  display: flex; align-items: baseline; gap: 0.6rem;
+  padding: 0.35rem 0; color: var(--text-dim);
+  border-bottom: 1px solid var(--line-soft);
+}
+.sneak__link:hover { color: var(--ink); }
+.sneak__title { font-size: 0.88rem; }
+.sneak__date { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-mute); }
+.sneak { display: flex; align-items: baseline; gap: 0.6rem;
+  padding: 0.35rem 0; border-bottom: 1px solid var(--line-soft); }
+
+/* What happens next, as a numbered list. A visitor sending a suggestion is
+   asking what happens to it, and answering that on the form is the difference
+   between a form and a queue they are about to forget about. */
+.steps { list-style: none; margin: 0.2rem 0 1.1rem; padding: 0; display: grid; gap: 0.85rem; }
+.step { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 0.75rem; align-items: start; }
+.step__n {
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 0.66rem; color: var(--ink);
+}
+.step div { color: var(--text-dim); font-size: 0.88rem; line-height: 1.6; }
+.step b { color: var(--ink); font-weight: 600; }
+
+.bullets { margin: 0; padding-left: 1.1rem; color: var(--text-dim); }
+.bullets li { margin-bottom: 0.4rem; }
+.bullets li::marker { color: var(--text-mute); }
+
+/* ---------------------------------------------------------
+   Games
+   --------------------------------------------------------- */
+.game-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 190px;
+  gap: 1.5rem;
+  padding: 1.6rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--rad);
+  overflow: hidden;
+  transition: transform 0.4s var(--ease), border-color 0.4s var(--ease);
+}
+.game-card:hover { transform: translateY(-4px); border-color: var(--line-strong); }
+/* Featured used to be a cyan border. It is now a heavier white one, plus a
+   marker in the corner, so the state survives a greyscale print. The marker is
+   a rule rather than the folded triangle it replaced: the fold read as a
+   dog-eared sheet of paper, and it sat on top of the artwork's own corner. */
+.game-card--featured { border-color: var(--line-strong); background: var(--panel-hi); }
+.game-card--featured::after {
+  content: ""; position: absolute; top: 0; right: 0;
+  width: 46px; height: 2px;
+  background: var(--ink);
+}
+.game-card__art {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--bg-3);
+  order: 2;
+}
+.game-card__art img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.5s var(--ease);
+}
+.game-card:hover .game-card__art img { transform: scale(1.06); }
+.game-card__body { order: 1; min-width: 0; }
+.game-card__name { font-size: 1.45rem; margin: 0.55rem 0 0.5rem; }
+.game-card__desc { color: var(--text-dim); font-size: 0.92rem; }
+.game-card__meta {
+  display: flex; flex-wrap: wrap; gap: 1.2rem;
+  margin-top: 1.1rem; padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.8rem; color: var(--text-mute);
+}
+.game-card__meta b { display: block; color: var(--text-dim); font-weight: 600; }
+.game-card__actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.1rem; }
+.game-card--soon .game-card__art { opacity: 0.55; }
+@media (max-width: 640px) {
+  .game-card { grid-template-columns: 1fr; }
+  .game-card__art { order: -1; max-width: 180px; }
+}
+
+/* ---------------------------------------------------------
+   Team
+   --------------------------------------------------------- */
+/* A tier is a section with a heading, a line about what the tier is for, and
+   the people in it. The blurb used to sit between the heading's rule and the
+   cards with no surface of its own, so it read as a stray paragraph dropped into
+   the page, and the heading's hairline ran the full 1200px of the wrap while the
+   cards beneath it stopped at 350. The rule is now the width of the heading it
+   belongs to, and the blurb is a caption set against the cards. */
+.tier { margin-bottom: var(--s7); }
+.tier__head {
+  display: flex; align-items: baseline; gap: 0.8rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--line);
+  /* The rule stops under the heading instead of running to the edge of the wrap:
+     it is a divider for this group, not a divider for the page. */
+  width: fit-content; min-width: 12rem; max-width: 100%;
+}
+.tier__name { font-size: 1.3rem; }
+.tier__count { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-mute); }
+.tier__blurb {
+  color: var(--text-dim); font-size: 0.9rem;
+  margin: 0.85rem 0 1.1rem;
+  max-width: var(--measure);
+}
+
+/* auto-fill, not auto-fit: auto-fit collapses the empty tracks, so a tier with
+   one person stretched that single card across the whole page and left a 74px
+   avatar marooned in it. auto-fill keeps the empty tracks, so the one card
+   keeps the width of a normal card. */
+.roster { display: grid; gap: 0.9rem; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.person {
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1.15rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--rad);
+  transition: border-color 0.35s var(--ease);
+}
+.person:hover { border-color: var(--line-strong); }
+.person__face {
+  width: 74px; height: 74px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-3);
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-size: 1.4rem; color: var(--text-dim);
+}
+.person__face img { width: 100%; height: 100%; object-fit: cover; }
+.person__name { font-size: 1.05rem; }
+.person__rank {
+  font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim); margin-top: 0.3rem;
+}
+.person__blurb { color: var(--text-mute); font-size: 0.82rem; margin-top: 0.45rem; }
+.person--lead { border-color: var(--line-strong); background: var(--panel-hi); }
+
+/* ---------------------------------------------------------
+   Forms (contact, application, store)
+   --------------------------------------------------------- */
+/* A form is a column of controls, so it is bounded by the measure rather than
+   by a pixel count. On a split page it is the working column and is bounded by
+   the grid instead. */
+.form { display: grid; gap: 1.1rem; max-width: var(--measure); }
+.form--page { max-width: none; }
+/* .form__row and .form__note are in base.css so the panel gets them too. */
+.form-error {
+  display: flex; align-items: flex-start; gap: 0.6rem;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid rgba(240, 138, 138, 0.45);
+  background: rgba(240, 138, 138, 0.08);
+  border-radius: var(--rad-sm);
+  color: var(--bad);
+  font-size: 0.86rem;
+}
+.form-error::before { content: "!"; font-family: var(--font-mono); font-weight: 700; line-height: 1.45; }
+.form-ok {
+  padding: 0.8rem 0.95rem;
+  border: 1px solid rgba(127, 224, 168, 0.4);
+  background: rgba(127, 224, 168, 0.07);
+  border-radius: var(--rad-sm);
+  color: var(--ok);
+  font-size: 0.86rem;
+}
+.req { color: var(--text-mute); margin-left: 0.2rem; }
+
+/* the human check */
+.human {
+  border: 1px solid var(--line);
+  border-radius: var(--rad);
+  padding: 1.1rem 1.2rem 1.2rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+.human__label {
+  display: block;
+  font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-mute); margin-bottom: 0.5rem;
+}
+.human__prompt { font-size: 1rem; margin-bottom: 0.8rem; }
+.human__choices { display: grid; gap: 0.5rem; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.human__choice {
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--rad-sm);
+  background: transparent;
+  text-align: left;
+  font-size: 0.86rem;
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease), background 0.2s var(--ease);
+}
+.human__choice:hover { border-color: var(--ink); color: #000; background: var(--ink); }
+.human__choice.is-picked { border-color: var(--ink); background: rgba(255, 255, 255, 0.1); color: var(--ink); }
+.human__row { display: flex; gap: 0.6rem; align-items: flex-end; }
+.human__row .field { flex: 1; margin-bottom: 0; }
+.human input[type="text"],
+.human input[type="number"] {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--rad-sm);
+  color: var(--text);
+  font: inherit;
+}
+.human__status { font-size: 0.8rem; color: var(--text-mute); margin-top: 0.6rem; }
+.human__status.is-bad { color: var(--bad); }
+.human__status.is-good { color: var(--ok); }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* ---------------------------------------------------------
+   Applications
+   --------------------------------------------------------- */
+.role-card {
+  display: grid;
+  gap: 1.1rem;
+  padding: 1.6rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--rad);
+}
+.role-card.is-open { border-color: rgba(127, 224, 168, 0.32); }
+.role-card.is-closed { opacity: 0.72; }
+.role-card__cols { display: grid; gap: 1.4rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.role-card__cols h4 {
+  font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 0.6rem; font-family: var(--font-mono);
+}
+.role-card__foot {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem;
+  padding-top: 1rem; border-top: 1px solid var(--line);
+}
+.role-card__stat { font-size: 0.8rem; color: var(--text-mute); font-family: var(--font-mono); }
+
+.apply-panel { margin-top: 1rem; }
+.apply-panel[hidden] { display: none; }
+
+/* ---------------------------------------------------------
+   Store
+   --------------------------------------------------------- */
+.tabs {
+  display: flex; flex-wrap: wrap; gap: 0.35rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 1.6rem;
+}
+.tab {
+  padding: 0.7rem 1.1rem;
+  font-family: var(--font-display); font-size: 0.78rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-dim);
+  border-bottom: 2px solid transparent;
+  transition: color 0.25s var(--ease), border-color 0.25s var(--ease);
+}
+.tab:hover { color: var(--ink); }
+.tab.is-on { color: var(--ink); border-bottom-color: var(--ink); }
+.tabpanel[hidden] { display: none; }
+
+.price-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+.price-card {
+  display: flex; flex-direction: column; gap: 0.7rem;
+  padding: 1.4rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--rad);
+  transition: transform 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+.price-card:hover { transform: translateY(-4px); border-color: var(--line-strong); }
+.price-card__amount { font-family: var(--font-display); font-size: 1.9rem; font-weight: 700; }
+.price-card__rate { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-mute); }
+.price-card__price {
+  font-family: var(--font-display); font-size: 1.4rem;
+  color: var(--ink);
+}
+.price-card--custom { grid-column: 1 / -1; }
+/* The card is a column flexbox, so the button stretches to the full card width
+   by default. A full-width action on every bundle turned the row of price
+   cards into a set of identical slabs; kept compact, it reads as a control
+   rather than as a second heading. */
+.price-card .btn { align-self: flex-start; }
+
+.cart {
+  position: sticky; top: 96px;
+  display: grid; gap: 0.9rem;
+  padding: 1.4rem;
+  background: rgba(6, 6, 6, 0.92);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--rad);
+}
+.cart__line {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 0.8rem;
+  font-size: 0.88rem;
+}
+.cart__line span:last-child { font-family: var(--font-mono); white-space: nowrap; }
+.cart__total {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding-top: 0.8rem; border-top: 1px solid var(--line);
+  font-family: var(--font-display); font-size: 1.3rem;
+}
+.cart__total b { font-size: 1.5rem; color: var(--ink); }
+
+/* discount code */
+.code-box {
+  display: grid; gap: 0.5rem;
+  padding: 0.95rem 1rem 1.05rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--rad-sm);
+  background: rgba(255, 255, 255, 0.03);
+}
+.code-box__row { display: flex; gap: 0.6rem; align-items: flex-end; }
+.code-box__row input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--rad-sm);
+  color: var(--text);
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.code-box__status { font-size: 0.8rem; color: var(--text-mute); margin: 0; }
+.code-box__status.is-good { color: var(--ok); }
+.code-box__status.is-bad { color: var(--bad); }
+.cart__line--off { color: var(--ok); }
+.cart__line--off span:last-child { text-decoration: line-through; }
+/* The "Note for shoppers" that staff write on a discount code. */
+.cart__note {
+  grid-column: 1 / -1;
+  font-size: 0.75rem;
+  color: var(--text-mute);
+  margin: -0.2rem 0 0.3rem;
+}
+
+/* The tax row: a postal code field and the figure it produces, side by side, so
+   the buyer watches the number change as they type rather than only discovering
+   it on the receipt. */
+.tax-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--rad-sm);
+  background: rgba(255, 255, 255, 0.02);
+}
+.tax-box__figure { text-align: right; padding-bottom: 0.15rem; }
+.tax-box__k {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}
+.tax-box__v {
+  display: block;
+  margin-top: 0.2rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.tax-note { margin: -0.3rem 0 0; font-size: 0.78rem; line-height: 1.5; color: var(--text-mute); }
+.cart__line--total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 0.2rem 0;
+  margin-top: 0.4rem;
+  border-top: 1px solid var(--line);
+  font-weight: 600;
+}
+.cart__line--total span:last-child { font-family: var(--font-display); font-size: 1.1rem; }
+
+.store-layout { display: grid; gap: 1.4rem; grid-template-columns: minmax(0, 1fr) 320px; align-items: start; }
+@media (max-width: 900px) { .store-layout { grid-template-columns: 1fr; } .cart { position: static; } }
+
+.pay-option {
+  /* An explicit two-column grid rather than a flex row. With flex, the note
+     text decided how wide the label was and the two items drifted apart across
+     the box, so the radio floated in the middle and the copy sat against the
+     right edge. Grid pins the radio to the first column and gives the text the
+     rest, whatever the note says. */
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.7rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: var(--rad-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+}
+.pay-option:hover { border-color: var(--line-strong); }
+.pay-option.is-on { border-color: var(--ink); background: rgba(255, 255, 255, 0.07); }
+/* Listed but not wired up. Still readable, not selectable, and dimmed so it
+   reads as off rather than as a choice. */
+.pay-option.is-off {
+  cursor: not-allowed;
+  opacity: 0.45;
+  border-style: dashed;
+}
+.pay-option.is-off:hover { border-color: var(--line); }
+.pay-option__radio { margin: 0.28rem 0 0; accent-color: #ffffff; }
+.pay-option__text { min-width: 0; }
+.pay-option__text b { display: block; font-size: 0.9rem; font-weight: 600; }
+.pay-option__note {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text-mute);
+}
+
+/* .notice and .notice--info moved to base.css; the staff panel needs them. */

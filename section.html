@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<meta name="description" content="Stitchline Interactive — independent game development studio.">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="/assets/logo-boxed.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/website%20scripts/css/base.css">
+<link rel="stylesheet" href="/website%20scripts/css/pages.css">
+</head>
+<body data-page="__PAGEKEY__">
+
+<div class="fx-noise" aria-hidden="true"></div>
+<div class="fx-scanlines" aria-hidden="true"></div>
+<div class="fx-grid" aria-hidden="true"></div>
+<div class="fx-vignette" aria-hidden="true"></div>
+
+<div class="cursor" id="cursor" aria-hidden="true">
+  <span class="cursor__cube"><img src="/assets/Cube.png" alt=""></span>
+  <span class="cursor__dot"></span>
+</div>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="header is-stuck" id="header">
+  <div class="header__inner">
+    <a class="brand" href="/" aria-label="Stitchline Interactive home">
+      <span class="brand__cube"><img src="/assets/Cube.png" alt=""></span>
+      <span class="brand__text">
+        <span class="brand__name" data-glitch="Stitchline">Stitchline</span>
+        <span class="brand__sub">Interactive</span>
+      </span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Primary">
+      <a class="nav__link" href="/">Home</a>
+      <a class="nav__link" href="/games.html">Games</a>
+      <a class="nav__link" href="/team.html">Team</a>
+      <a class="nav__link" href="/contact.html">Suggestions</a>
+      <a class="nav__link" href="/store.html">Store</a>
+      <a class="nav__link" href="/application.html">Application</a>
+    </nav>
+    <div class="header__side">
+      <div class="socials" id="socials" aria-label="Social links"></div>
+      <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="header__rail" aria-hidden="true"><i id="headerRail"></i></div>
+</header>
+
+<main id="main">
+  <section class="page">
+    <div class="hero__bg" aria-hidden="true">
+      <div class="hero__grid"></div>
+      <div class="hero__glow"></div>
+    </div>
+    <div class="wrap">
+      <div class="page__head">
+        <!-- data-glitch sits on the inner span, not the h1: the glitch rule
+             makes the target inline-block, which would leave the heading
+             shrink-to-fit on the same line as the eyebrow badge. -->
+        <p class="eyebrow"><span class="pulse"></span> __EYEBROW__</p>
+        <h1 class="page__title"><span data-glitch="__HEADING__">__HEADING__</span></h1>
+        <p class="page__desc">__DESC__</p>
+      </div>
+__BODY__
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <div class="footer__brand">
+      <span class="footer__cube"><img src="/assets/Cube.png" alt=""></span>
+      <span class="footer__name" data-glitch="Stitchline Interactive">Stitchline Interactive</span>
+    </div>
+    <p class="footer__copy">&copy; 2026 Stitchline Interactive. All rights reserved.</p>
+    <nav class="footer__links" aria-label="Footer">
+      <button class="footer__link" type="button" data-modal="terms">Terms</button>
+      <button class="footer__link" type="button" data-modal="privacy">Privacy</button>
+      <a class="footer__link" href="/contact.html">Suggestions</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal__backdrop" data-close></div>
+  <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <header class="modal__head">
+      <h3 id="modalTitle">Title</h3>
+      <button class="modal__close" type="button" data-close aria-label="Close">&times;</button>
+    </header>
+    <div class="modal__body" id="modalBody"></div>
+  </div>
+</div>
+
+<script src="/website%20scripts/js/fx.js"></script>
+<script src="/website%20scripts/js/cursor.js"></script>
+<script src="/website%20scripts/js/nav.js"></script>
+<script src="/website%20scripts/js/site.js"></script>
+<script src="/website%20scripts/js/main.js"></script>
+</body>
+</html>

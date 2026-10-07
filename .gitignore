@@ -1,0 +1,12 @@
+.env
+Core/.env
+configurations/private/
+Core/data/state.json
+Core/data/staff.json
+Core/data/sessions.json
+Core/data/bots.log
+Core/data/bots.lock
+deploy/output/
+spaceship-upload.zip
+__pycache__/
+*.py[cod]

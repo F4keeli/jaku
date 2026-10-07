@@ -1,0 +1,42 @@
+{
+  "accessRules": {
+    "staffTerms": { "view": "all-staff", "configure": "leadership-dashboard" },
+    "clockInOut": { "view": "all-staff", "reasonRequired": true },
+    "regularDashboard": {
+      "minimumRoleId": "1544077746991267941",
+      "excludedRoleIds": ["1544077276826574868"]
+    },
+    "teamChat": { "view": "all-staff", "use": "all-staff" },
+    "teamVoice": { "view": "all-staff", "use": "all-staff", "configure": "leadership-dashboard" },
+    "development": {
+      "allowedRoleIds": [
+        "1544073808917430383",
+        "1544073923807674378",
+        "1544077276826574868",
+        "1544092761651814520",
+        "1544134619241382028",
+        "1544135703183499355"
+      ]
+    },
+    "testersArea": {
+      "viewDevelopmentRole": true,
+      "talkRoleIds": [
+        "1544073808917430383",
+        "1544073923807674378",
+        "1544077276826574868",
+        "1544134619241382028"
+      ]
+    },
+    "tickets": { "minimumRoleByTicketType": "configured-per-ticket-type" },
+    "applications": { "reviewRequiresHigherRoleThanApplicant": true },
+    "breakRequests": {
+      "request": "all-staff",
+      "approveMinimumRoleId": "1544077746991267941",
+      "onDeny": "delete-request-and-notify-through-bot"
+    },
+    "leadershipDashboard": {
+      "minimumRoleId": "1544077746991267941",
+      "excludedRoleIds": ["1544077276826574868"]
+    }
+  }
+}

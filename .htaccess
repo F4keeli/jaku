@@ -1,0 +1,35 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Canonical site: https://stitchlineinteractivegames.com is the only origin that serves content.
+  RewriteCond %{HTTP_HOST} ^www\.stitchlineinteractivegames\.com(?::\d+)?$ [NC]
+  RewriteRule ^ https://stitchlineinteractivegames.com%{REQUEST_URI} [R=301,L]
+  RewriteCond %{HTTP_HOST} ^stitchlineinteractivegames\.com(?::\d+)?$ [NC]
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
+  RewriteRule ^ https://stitchlineinteractivegames.com%{REQUEST_URI} [R=301,L]
+  RewriteCond %{HTTP_HOST} !^stitchlineinteractivegames\.com(?::\d+)?$ [NC]
+  RewriteRule ^ - [F,L]
+  RewriteRule ^bot_api\.php$ - [F,L]
+  RewriteRule ^staff_api\.php$ - [F,L]
+  RewriteRule ^payments_api\.php$ - [F,L]
+  RewriteRule ^account_api\.php$ - [F,L]
+  RewriteRule ^webauthn\.php$ - [F,L]
+  RewriteRule ^stitchline-[a-z-]+\.php$ - [F,L,NC]
+  RewriteRule ^staff/api/(.+)$ api.php?route=staff/api/$1 [QSA,L]
+  RewriteRule ^staff/?$ staff.html [L]
+  RewriteRule ^api/(.+)$ api.php?route=api/$1 [QSA,L]
+  RewriteRule ^(?:Core|deploy|__pycache__|\.git|publish)(?:/|$) - [F,L,NC]
+  RewriteRule ^(?:bots|database)(?:/|$) - [F,L,NC]
+  RewriteRule ^(?:start\.(?:py|bat)|publish\.zip|README\.md)$ - [F,L,NC]
+  RewriteRule \.(?:env(?:\..*)?|py|pyc|pyo|log|json|sql|bak|backup)$ - [F,L,NC]
+  # Allow-list: anything not listed here is never served, even if it is uploaded by mistake.
+  RewriteCond %{REQUEST_URI} !^/(?:$|(?:index|games|team|contact|store|application|account|staff|section)\.html$|api\.php$|install\.php$|robots\.txt$|favicon\.ico$|assets/|website(?:%20|\s)scripts/)
+  RewriteRule ^ - [F,L]
+</IfModule>
+Options -Indexes
+<FilesMatch "^\.(?!well-known)">
+  Require all denied
+</FilesMatch>
+<Files ".htaccess">
+  Require all denied
+</Files>

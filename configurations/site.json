@@ -1,0 +1,72 @@
+{
+  "studio": {
+    "name": "Stitchline Interactive",
+    "domain": "https://stitchlineinteractivegames.com",
+    "supportEmail": "support@stitchlineinteractivegames.com",
+    "discord": "https://discord.gg/eg848X8Hnx",
+    "x": "https://x.com/Stitchline_I",
+    "tiktok": "https://www.tiktok.com/@stitchline_interactive?is_from_webapp=1&sender_device=pc",
+    "youtube": "https://www.youtube.com/channel/UClwZgJarkBRdyVjAkVoGr8g"
+  },
+  "hosting": {
+    "provider": "Spaceship",
+    "plan": "Supreme",
+    "domain": "https://stitchlineinteractivegames.com"
+  },
+  "email": {
+    "transport": "SMTP",
+    "address": "support@stitchlineinteractivegames.com",
+    "host": "mail.spacemail.com",
+    "port": 587,
+    "credentialsConfigured": false
+  },
+  "database": {
+    "engine": "MariaDB",
+    "credentialsConfigured": false
+  },
+  "games": [
+    {
+      "name": "Beyond Lock",
+      "platform": "Roblox",
+      "status": "In development",
+      "url": "https://www.roblox.com/games/130113973375124/Beyond-Lock",
+      "discord": "https://discord.gg/SyfWBGuKG",
+      "image": "/assets/game-thumb.png",
+      "description": "Beyond Lock is an upcoming action game developed by Stitchline Interactive. Designed with a focus on competitive depth and mechanical responsiveness."
+    }
+  ],
+  "staffRoles": [
+    { "name": "Owner", "id": "1544073808917430383", "nonObtainable": true, "development": false },
+    { "name": "Director", "id": "1544073923807674378", "development": false },
+    { "name": "Compliance Officer", "id": "1544100575770181652", "development": false },
+    { "name": "Server Management", "id": "1544074109892165742", "development": false },
+    { "name": "Project Management", "id": "1544077276826574868", "development": true },
+    { "name": "Supervisor Of Staff", "id": "1544077746991267941", "development": false },
+    { "name": "Head Administrator", "id": "1544078847899734036", "development": false },
+    { "name": "Senior Administrator", "id": "1544078929982263398", "development": false },
+    { "name": "Junior Administrator", "id": "1544078981530132520", "development": false },
+    { "name": "Administrator", "id": "1544079618854625383", "development": false },
+    { "name": "Head Moderator", "id": "1544079678476779573", "development": false },
+    { "name": "Senior Moderator", "id": "1544079711779422208", "development": false },
+    { "name": "Junior Moderator", "id": "1544092291017474098", "development": false },
+    { "name": "Moderator", "id": "1544092366498168943", "development": false },
+    { "name": "Trial Moderator", "id": "1544092395044343919", "development": false },
+    { "name": "Support Staff", "id": "1544092532185501736", "development": false },
+    { "name": "Head Scam Investigator", "id": "1551038814934536312", "development": false },
+    { "name": "Senior Scam Investigator", "id": "1551039051463921695", "development": false },
+    { "name": "Junior Scam Investigator", "id": "1551038906500124693", "development": false },
+    { "name": "Scam investigator", "id": "1551038617395404890", "development": false },
+    { "name": "Appeals Manager", "id": "1544097123031711854", "development": false },
+    { "name": "Appeals Officer", "id": "1544096896941826150", "development": false },
+    { "name": "Developer", "id": "1544092761651814520", "development": true },
+    { "name": "Tester", "id": "1544134619241382028", "development": true },
+    { "name": "Voice Actor", "id": "1544135703183499355", "development": true }
+  ],
+  "integrations": {
+    "discordOAuth": "not-configured",
+    "robloxVerification": "not-configured",
+    "database": "not-configured",
+    "smtp": "not-configured",
+    "payments": "not-configured"
+  }
+}

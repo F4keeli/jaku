@@ -1,0 +1,50 @@
+{
+  "botName": "Stitchline Interactive",
+  "community": {
+    "displayName": "Stitchline Interactive",
+    "prefix": "?",
+    "settings": {
+      "helpMessage": "Community commands for the Stitchline Interactive server.",
+      "ticketEtaMessage": "Response times vary with ticket volume. Check your ticket for updates.",
+      "enabled": {
+        "help": true,
+        "ticketeta": true,
+        "suggest": true,
+        "balance": true,
+        "store": true,
+        "level": true,
+        "ticket": true
+      }
+    },
+    "prefixCommands": [
+      { "name": "help", "trigger": "?help", "configurable": true },
+      { "name": "ticketeta", "trigger": "?ticketeta", "configurable": true },
+      { "name": "website", "trigger": "?website", "configurable": false },
+      { "name": "ping", "trigger": "?ping", "configurable": false }
+    ],
+    "slashCommands": [
+      { "name": "suggest", "configurable": true },
+      { "name": "balance", "configurable": true },
+      { "name": "store", "configurable": true },
+      { "name": "level", "configurable": true },
+      { "name": "ticket", "configurable": true },
+      { "name": "leaderboard", "configurable": false },
+      { "name": "invites", "configurable": false },
+      {
+        "name": "vc",
+        "configurable": false,
+        "subcommands": ["creation", "configuration", "delete"]
+      },
+      { "name": "music", "configurable": false }
+    ]
+  },
+  "moderation": {
+    "displayName": "Stitchline Interactive",
+    "slashCommands": [
+      { "name": "kick" },
+      { "name": "ban" },
+      { "name": "timeout" }
+    ]
+  },
+  "responseStyle": "embedded-clean-message"
+}

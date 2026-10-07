@@ -1,0 +1,368 @@
+/* =========================================================
+   Stitchline Interactive — home page
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   HERO
+   --------------------------------------------------------- */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex; align-items: center;
+  padding: 8.5rem 0 5rem;
+  overflow: hidden;
+}
+
+/* The wordmark behind the headline, as texture rather than as a second thing to
+   read.
+
+   Centred at 5% was not enough: a colour logo directly under a headline puts
+   its red and cyan fringes through the outlined second line, and the word read
+   as smudged. Moving it aside was worse - half a wordmark clipped by the right
+   edge looks like a mistake rather than a decision. So it stays centred and the
+   mask is inverted: clear where the type is, present at the edges. The headline
+   gets clean space and the logo becomes a watermark in the literal sense. */
+.hero__logo {
+  position: absolute; top: 50%; left: 50%;
+  width: min(80vw, 860px); height: auto;
+  transform: translate(-50%, -50%);
+  opacity: 0.06;
+  object-fit: contain;
+  -webkit-mask-image: radial-gradient(ellipse 52% 42% at 50% 50%, transparent 62%, #000 96%);
+  mask-image: radial-gradient(ellipse 52% 42% at 50% 50%, transparent 62%, #000 96%);
+  will-change: transform;
+  animation: heroDrift 22s ease-in-out infinite alternate;
+}
+@keyframes heroDrift {
+  0%   { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) scale(1.05) rotate(2deg); }
+}
+/* The eyebrow badge, the hero grid and the hero glow are shared by the home page
+   and every Section 3-6 page, so they live in base.css next to the rest of the
+   shell. Only the layout specific to the home hero stays here. */
+.hero__inner { position: relative; z-index: 2; width: 100%; text-align: center; }
+
+.hero__title {
+  margin: 1.5rem 0 0;
+  font-size: clamp(2.6rem, 10.5vw, 8rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+.hero__line { display: block; }
+.hero__line:first-child { color: var(--ink); }
+.hero__line--alt {
+  color: var(--ink);
+  -webkit-text-stroke: 1.5px var(--ink);
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+}
+/* An outlined second line gives the stack a hierarchy without a second hue:
+   solid on top, hollow beneath. The glitch pseudo-elements have to be given the
+   fill explicitly, because the stroke/fill treatment is inherited by them and
+   an invisible copy produces no tear at all. */
+.hero__line--alt::before,
+.hero__line--alt::after {
+  background: none;
+  -webkit-text-fill-color: var(--ink);
+  color: var(--ink);
+  -webkit-text-stroke: 0;
+}
+
+.hero__tagline {
+  max-width: 640px; margin: 1.7rem auto 0;
+  color: var(--text-dim); font-size: clamp(0.95rem, 1.6vw, 1.04rem);
+}
+
+.quotes {
+  position: relative;
+  max-width: 660px; margin: 2.4rem auto 0;
+  min-height: 5.5rem;
+}
+.quote {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  margin: 0; padding-inline: 0.5rem;
+  font-family: var(--font-display); font-size: clamp(1rem, 2.1vw, 1.3rem);
+  color: var(--text);
+  opacity: 0; transform: translateY(12px) scale(0.98);
+  filter: blur(4px);
+  transition: opacity 0.55s var(--ease), transform 0.55s var(--ease), filter 0.55s var(--ease);
+}
+.quote.is-active { opacity: 1; transform: none; filter: none; }
+.quote.is-out { opacity: 0; transform: translateY(-12px) scale(0.98); filter: blur(4px); }
+.quotes__dots { position: absolute; left: 50%; bottom: -0.4rem; transform: translateX(-50%); display: flex; gap: 0.4rem; }
+.quotes__dots button {
+  width: 20px; height: 3px; border-radius: 2px;
+  background: rgba(255, 255, 255, 0.18);
+  transition: background 0.3s var(--ease), width 0.3s var(--ease);
+}
+.quotes__dots button.is-on { background: var(--ink); width: 32px; }
+
+.hero__cta { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; margin-top: 2.6rem; }
+
+/* counters */
+.counters {
+  display: grid; gap: 1px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  max-width: 880px; margin: 3.4rem auto 0;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--rad);
+  overflow: hidden;
+}
+.counter {
+  padding: 1.4rem 1rem;
+  background: rgba(0, 0, 0, 0.6);
+  transition: background 0.35s var(--ease);
+}
+.counter:hover { background: rgba(255, 255, 255, 0.04); }
+.counter dt {
+  font-family: var(--font-mono); font-size: 0.64rem;
+  letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-mute);
+}
+.counter dd {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(1.9rem, 4.4vw, 2.7rem); line-height: 1.05;
+  color: var(--ink);
+  margin: 0.35rem 0 0.2rem;
+  font-variant-numeric: tabular-nums;
+}
+.counter__note { font-size: 0.72rem; color: var(--text-mute); }
+
+.scroll-cue {
+  position: absolute; left: 50%; bottom: 1.6rem; z-index: 2;
+  width: 22px; height: 34px; margin-left: -11px;
+  border: 1px solid var(--line-strong); border-radius: 12px;
+  display: block;
+}
+.scroll-cue span {
+  position: absolute; left: 50%; top: 7px;
+  width: 3px; height: 6px; margin-left: -1.5px;
+  border-radius: 2px; background: var(--ink);
+  animation: cueDrop 1.9s ease-in-out infinite;
+}
+@keyframes cueDrop {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  70%      { transform: translateY(12px); opacity: 0; }
+}
+
+/* ---------------------------------------------------------
+   01 ANNOUNCEMENTS
+   --------------------------------------------------------- */
+.announce { display: flex; flex-direction: column; gap: 1.4rem; }
+
+.announce__dots { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+.announce__dot {
+  position: relative;
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  transition: transform 0.3s var(--ease), background 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+/* Read state is a hollow ring, unread is a filled disc, active is a ring around
+   a filled disc. Three states, one hue, no colour required. */
+.announce__dot::after {
+  content: ""; position: absolute; inset: 3px; border-radius: 50%;
+  background: transparent;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.announce__dot.is-unread::after { background: var(--ink); box-shadow: 0 0 10px rgba(255, 255, 255, 0.6); }
+.announce__dot.is-active { transform: scale(1.28); border-color: var(--ink); box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08); }
+.announce__dot.is-active::after { background: var(--ink); }
+
+.announce__panel {
+  position: relative;
+  padding: 1.7rem 1.7rem 1.8rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--rad);
+  min-height: 130px;
+}
+.announce__panel::before {
+  content: ""; position: absolute; inset: 0 auto 0 0; width: 2px; background: var(--ink);
+}
+.announce__head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; margin-bottom: 0.7rem; }
+.announce__title { font-size: 1.2rem; }
+.announce__body { color: var(--text-dim); font-size: 0.92rem; max-width: 70ch; }
+.announce__meta {
+  margin-top: 1rem; font-family: var(--font-mono);
+  font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-mute);
+}
+.announce__empty { display: grid; place-items: center; gap: 0.7rem; text-align: center; color: var(--text-mute); }
+.announce__empty b { font-family: var(--font-display); color: var(--text-dim); font-size: 1rem; letter-spacing: 0.02em; }
+.announce__empty code {
+  font-family: var(--font-mono); font-size: 0.72rem; color: var(--text);
+  background: rgba(255, 255, 255, 0.05); padding: 0.3rem 0.6rem; border-radius: 6px;
+  border: 1px solid var(--line);
+  word-break: break-all;
+}
+.announce__nav { display: flex; gap: 0.4rem; margin-left: auto; }
+.announce__nav button {
+  width: 30px; height: 30px; border-radius: 6px;
+  border: 1px solid var(--line);
+  color: var(--text-dim);
+  transition: color 0.25s, border-color 0.25s, background 0.25s;
+}
+.announce__nav button:hover { color: #000; border-color: var(--ink); background: var(--ink); }
+
+/* ---------------------------------------------------------
+   02 FEATURED GAME
+   --------------------------------------------------------- */
+.feature {
+  display: grid; gap: clamp(1.6rem, 4vw, 3.2rem);
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  padding: clamp(1.5rem, 3.4vw, 2.6rem);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: calc(var(--rad) + 4px);
+  position: relative; overflow: hidden;
+}
+.feature::before {
+  content: ""; position: absolute; inset: -40% 55% -40% -10%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05), transparent 62%);
+  pointer-events: none;
+}
+/* Grid child 1 of .feature. min-width: 0 matches .game-card__body on the Games
+   page: a grid item defaults to min-content width, so a long unbroken string
+   in the description or a stat label widens the column past the art frame
+   instead of wrapping inside it. */
+.feature__body { min-width: 0; }
+.feature__badges { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-bottom: 1.1rem; }
+.feature__name { font-size: clamp(1.9rem, 4.6vw, 3.1rem); margin-bottom: 0.9rem; }
+.feature__desc { color: var(--text-dim); font-size: 0.95rem; max-width: 60ch; }
+
+.feature__stats {
+  display: grid; gap: 1px; grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 1.7rem 0;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--rad-sm);
+  overflow: hidden;
+}
+/* Three cells, each with the same three lines: what it is, the figure, and a
+   caption. The third line is always there, empty or not, so the numbers across
+   the row sit on one line instead of the rating floating a line higher than the
+   two headcounts beside it. */
+.fstat { padding: 0.95rem 0.85rem; background: rgba(0, 0, 0, 0.5); }
+.fstat dt {
+  font-family: var(--font-mono); font-size: 0.58rem;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-mute);
+}
+.fstat dd {
+  font-family: var(--font-display); font-weight: 700; font-size: 1.28rem;
+  margin-top: 0.28rem; color: var(--ink); font-variant-numeric: tabular-nums;
+  display: flex; align-items: center; gap: 0.5rem; min-height: 1.7rem;
+}
+.fstat .fstat__note {
+  font-size: 0.7rem; font-weight: 400; margin-top: 0.3rem; min-height: 1.1rem;
+  font-family: var(--font-mono); letter-spacing: 0.06em; color: var(--text-mute);
+}
+.fstat__sub { color: var(--text-mute); }
+/* The dash where a figure would be, so a blank cell is visibly blank rather
+   than shorter than its neighbours. */
+.fstat__none { color: var(--text-mute); opacity: 0.5; }
+/* One "pending", for all three, in the caption slot where the count normally
+   goes. It used to be display-size in the rating and caption-size in the two
+   numbers, and in two different places inside two different boxes. */
+.fstat__pending {
+  font-family: var(--font-mono); font-size: 0.7rem; font-weight: 400;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-mute);
+}
+
+/* Five stars, filled proportionally.
+
+   Two rows of the same glyph, the second clipped to the score: a rating is
+   continuous, so 4.6 is four and three fifths, and rounding to whole or half
+   stars would state something untrue. The empty row underneath is what makes
+   the unfilled part visible; without it the fill would just stop. */
+.stars { display: inline-block; position: relative; line-height: 1; }
+.stars__row { display: block; position: relative; white-space: nowrap; }
+.stars__empty,
+.stars__fill { font-size: 1.05rem; letter-spacing: 0.08em; }
+.stars__empty { color: rgba(255, 255, 255, 0.16); }
+.stars__fill {
+  position: absolute; inset: 0 auto 0 0; overflow: hidden;
+  color: var(--ink);
+}
+.fstat__score { font-variant-numeric: tabular-nums; }
+
+.feature__cta { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+.feature__art { position: relative; display: grid; place-items: center; }
+.feature__artFrame {
+  position: relative; width: min(100%, 330px); aspect-ratio: 1;
+  border-radius: 18px; overflow: hidden;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-3);
+  box-shadow: 0 40px 80px -44px rgba(0, 0, 0, 0.95);
+  transition: transform 0.5s var(--ease);
+}
+.feature__art:hover .feature__artFrame { transform: translateY(-6px) rotate(-1deg); }
+.feature__artFrame img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--ease); }
+.feature__art:hover .feature__artFrame img { transform: scale(1.05); }
+/* Normal blend rather than mix-blend-mode: screen, so this wash does not force
+   the art frame into its own compositing group. At these opacities the two are
+   visually indistinguishable. */
+.feature__artFrame::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), transparent 50%, rgba(0, 0, 0, 0.35));
+}
+.feature__artFrame::before {
+  content: ""; position: absolute; inset: 0; z-index: 2;
+  background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 4px);
+  opacity: 0.5;
+  will-change: transform;
+  animation: artScan 5s linear infinite;
+}
+@keyframes artScan { 0% { transform: translateY(-6%); } 100% { transform: translateY(6%); } }
+
+/* ---------------------------------------------------------
+   03 VALUES vs PLAYERS
+   --------------------------------------------------------- */
+.row-label {
+  display: flex; align-items: center; gap: 0.8rem;
+  font-family: var(--font-mono); font-size: 0.68rem;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--text-dim);
+  margin: 0 0 1.1rem;
+}
+.row-label::after { content: ""; flex: 1; height: 1px; background: var(--grad-h); }
+.row-label--alt { margin-top: 2.4rem; }
+
+.versus {
+  display: flex; align-items: center; gap: 1.1rem;
+  margin: 1.4rem 0 0;
+}
+.versus__line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--line-strong), transparent); }
+.versus__badge {
+  font-family: var(--font-display); font-weight: 700; font-size: 0.9rem;
+  letter-spacing: 0.2em; padding: 0.35rem 0.95rem;
+  color: #000;
+  background: var(--ink);
+  border-radius: 999px;
+  will-change: transform;
+  animation: cubeSpin 12s linear infinite;
+}
+
+/* ---------------------------------------------------------
+   04 / 05 TEAMS + GOALS
+   --------------------------------------------------------- */
+.section--team { background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.02), transparent); }
+.section--goals { padding-bottom: clamp(4rem, 9vw, 7rem); }
+
+/* ---------------------------------------------------------
+   Responsive
+   --------------------------------------------------------- */
+@media (max-width: 940px) {
+  .feature { grid-template-columns: 1fr; }
+  .feature__art { order: -1; }
+  .feature__artFrame { width: min(64vw, 260px); }
+}
+@media (max-width: 620px) {
+  .hero { padding-top: 7rem; }
+  .feature__stats { grid-template-columns: 1fr; }
+  .announce__head { align-items: flex-start; }
+  .announce__nav { margin-left: 0; }
+}

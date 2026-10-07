@@ -1,0 +1,58 @@
+:root{--acid:#b8bdc2;--cyan:#a0a6ac;--line:#30353a;--muted:#aeb4b9}
+.hero{grid-template-columns:1fr;gap:0;min-height:min(800px,calc(100svh - 82px));padding:clamp(72px,10vh,118px) max(24px,calc((100vw - 1320px)/2)) 92px;text-align:center}
+.hero-copy{width:min(100%,920px);justify-self:center;z-index:2;padding-bottom:0}
+.hero .eyebrow{justify-content:center}
+.hero h1{font-size:clamp(68px,9.4vw,138px);line-height:.82;margin:32px 0 26px;text-wrap:balance}
+.hero h1 span{font-size:.27em;letter-spacing:.48em;padding-left:.48em;line-height:1.6;text-align:center}
+.hero-quote{margin-inline:auto;text-align:center;font-size:clamp(16px,1.5vw,20px)}
+.hero-actions{justify-content:center}
+@media(max-width:480px){.hero-actions{width:min(100%,320px);margin-inline:auto;flex-direction:column;align-items:stretch;gap:8px}.hero-actions .button{min-height:46px;white-space:nowrap}.hero-actions .text-link{justify-content:center;min-height:42px}}
+.hero-art{position:absolute;right:5%;top:50%;transform:translateY(-50%);width:min(36vw,420px);height:auto;aspect-ratio:1;border:0;background:none;box-shadow:none;opacity:.11;overflow:visible;z-index:0}
+.hero-art .art-grid,.hero-art .art-crosshair,.hero-art .art-index,.hero-art .art-coordinate,.hero-art .art-caption{display:none}
+.hero-cube{width:100%;filter:grayscale(1) drop-shadow(0 0 24px rgba(232,235,238,.16))}
+.hero::after{background-image:url("../../assets/logo.png"),linear-gradient(rgba(230,235,239,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(230,235,239,.018) 1px,transparent 1px),radial-gradient(ellipse at center,transparent 12%,rgba(5,8,10,.24) 58%,rgba(5,8,10,.75) 100%);background-position:center,0 0,0 0,center;background-repeat:no-repeat,repeat,repeat,no-repeat;background-size:min(66vw,760px) auto,72px 72px,72px 72px,100% 100%;opacity:.07;mix-blend-mode:screen}
+body{color:#e9ecee;font-size:15px}
+.primary-nav a{font-size:12px;color:#c0c5c9}
+.connect-button{color:#d8dcdf}
+.connect-button:hover{border-color:#90979d;background:#141719}
+.eyebrow,.section-kicker{color:#c2c7cb}
+.section-side-note{color:#a3a9ae}
+.stats-strip>div>span,.stats-strip>a>span{font-size:11px;color:#b3b9be;line-height:1.6}
+.stats-strip small{display:block;margin-top:3px;font-size:9px;line-height:1.35;color:#aeb4b9}
+.goal-row h3,.comparison-column h3{font-size:15px}
+.goal-row p,.comparison-column p,.about-copy p{font-size:13px;line-height:1.8;color:#b5bbc0}
+.team-heading>p,.store-layout>div:first-child>p,.application-layout>div:first-child>p{font-size:13px;line-height:1.85;color:#b5bbc0}
+.game-info>p{font-size:13px;line-height:1.8;color:#c1c6ca}
+.game-status{font-size:9px;color:#c0c5c9}
+.game-status span:first-child{color:#c8cdd1}
+.hero-art::before,.art-crosshair{border-color:rgba(190,195,200,.3)}
+.art-crosshair::before,.art-crosshair::after{background:rgba(190,195,200,.55)}
+.hero-art::after{border-color:rgba(157,164,171,.13);box-shadow:0 0 38px rgba(126,134,142,.07),inset 0 0 30px rgba(126,134,142,.035)}
+.game-info h3 em{color:#b9c0c5}
+.goal-symbol{color:#aab1b6}
+.game-data span{font-size:9px;color:#aeb4b9}
+.game-data strong{font-size:11px;color:#e4e7e9}
+.team-person div span,.contact-email,.status-index,.store-status,.availability{color:#b3b9be}
+.button-primary,.contact-copy .button-primary{background:#b8bdc2;color:#101214}
+.button-primary:hover,.contact-copy .button-primary:hover{background:#d0d4d7}
+.button-outline{border-color:#737a80;color:#e2e5e7}
+.button-outline:hover{border-color:#c0c5c9;color:#fff}
+.game-status i,.store-status i,.stats-strip a strong i{background:#b8bdc2;box-shadow:none}
+.footer-main{min-height:126px;grid-template-columns:minmax(180px,1fr) minmax(220px,1fr) minmax(300px,1fr);gap:28px;max-width:1400px;margin-inline:auto}
+.footer-logo img{width:172px;height:108px;object-position:left center}
+.footer-main>p{font-size:10px;line-height:1.85;color:#b9bfc4}
+.footer-links{justify-self:end;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.footer-links a,.footer-links button{min-height:34px;display:inline-flex;align-items:center;color:#c4c9cd;font-size:12px}
+.footer-links a:hover,.footer-links button:hover{color:#fff}
+.footer-bottom{font-size:10px;color:#b0b6bb}
+.contact-email,.form-note,.modal-footnote{font-size:10px;color:#b0b6bb}
+.discipline-list p,.store-list p,.application-empty p{font-size:12px;color:#b2b8bd}
+.availability,.game-data span{font-size:10px}
+.contact-form label,.form-modal label{font-size:12px;color:#d0d5d8}
+.contact-form input,.contact-form select,.contact-form textarea,.form-modal input,.form-modal select,.form-modal textarea{font-size:13px;color:#eceff1}
+.contact-form input:focus,.contact-form select:focus,.contact-form textarea:focus,.form-modal input:focus,.form-modal select:focus,.form-modal textarea:focus{border-color:#9aa1a7}
+.form-submit p,.form-note,.staff-notice{font-size:10px;color:#b3b9be}
+body .staff-notice{border-left-color:#858c92}
+.roster-index,.discipline-list>div>span,.store-index,.application-index{color:#afb5ba}
+@media(max-width:860px){.hero{min-height:680px;padding:78px 24px 88px}.hero-art{right:50%;top:46%;transform:translate(50%,-50%);width:min(68vw,360px);opacity:.08}.hero h1{font-size:clamp(60px,11vw,96px)}.footer-main{grid-template-columns:1fr 1fr;gap:16px;min-height:0}.footer-logo{grid-column:1}.footer-main>p{grid-column:2;justify-self:end}.footer-links{grid-column:1/-1;justify-self:start;gap:18px}.footer-logo img{width:145px;height:90px}}
+@media(max-width:480px){body{font-size:14px}.hero{min-height:650px;padding:70px 18px 84px}.hero h1{font-size:clamp(50px,12.5vw,68px)}.hero h1 span{letter-spacing:.32em;padding-left:.32em}.hero-art{top:43%;width:min(82vw,320px);opacity:.07}.footer-main{grid-template-columns:1fr;gap:8px}.footer-logo,.footer-main>p,.footer-links{grid-column:1;justify-self:start}.footer-main>p{margin:0}.footer-links{gap:14px}.footer-links a,.footer-links button{font-size:12px}.footer-bottom{font-size:9px}}
