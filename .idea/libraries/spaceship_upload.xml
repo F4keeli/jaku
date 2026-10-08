@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="spaceship-upload">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/deploy/output/spaceship-upload.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
