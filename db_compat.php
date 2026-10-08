@@ -12,6 +12,7 @@ final class StitchPgPdo extends PDO
         'bot_store' => 'store_key',
         'bot_heartbeats' => 'bot_id',
         'bot_records' => 'record_kind, record_id',
+        'discord_role_checks' => 'discord_id',
         'api_rate_limits' => 'bucket, identity_hash',
         'site_metrics' => 'metric_key',
         'customer_accounts' => 'discord_id',

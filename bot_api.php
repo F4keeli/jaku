@@ -293,6 +293,177 @@ function bot_finish_fulfillment(array $body): never
     reply(200, ['ok' => true, 'ref' => $reference, 'status' => $status]);
 }
 
+/* ---------------------------------------------------------
+   Discord role checks
+
+   The website cannot see guild roles, but the bot can. When a
+   member verifies their account the site queues their Discord
+   ID here; the bot reports the roles the member holds, the
+   highest studio role wins, and a matching member is linked to
+   a staff login with the email they verified. */
+function bot_role_checks_pending(): never
+{
+    $rows = database()->query(
+        'SELECT discord_id, discord_username FROM discord_role_checks ' .
+        'WHERE checked_at IS NULL ORDER BY requested_at LIMIT 100'
+    )->fetchAll();
+    $checks = [];
+    foreach ($rows as $row) {
+        $checks[] = [
+            'discord_id' => (string)$row['discord_id'],
+            'discord_username' => (string)$row['discord_username'],
+        ];
+    }
+    reply(200, ['checks' => $checks]);
+}
+
+function bot_role_checks_report(array $body): never
+{
+    $discordId = (string)($body['discord_id'] ?? '');
+    if (!preg_match('/^[0-9]{17,20}$/', $discordId)) {
+        reply(400, ['error' => 'bad_discord_id', 'message' => 'A numeric Discord user ID is required.']);
+    }
+    $roles = $body['roles'] ?? [];
+    if (!is_array($roles)) {
+        reply(400, ['error' => 'bad_roles', 'message' => 'Roles must be a list of role IDs.']);
+    }
+    $roleIds = [];
+    foreach ($roles as $role) {
+        $roleId = is_scalar($role) ? trim((string)$role) : '';
+        if (preg_match('/^[0-9]{15,20}$/', $roleId)) {
+            $roleIds[] = $roleId;
+        }
+    }
+
+    /* Match the member's roles against the studio roster. The
+       tier ladder decides which role wins when a member holds
+       several: Leadership outranks Management, which outranks
+       Staff, Development and Testing. */
+    $ladder = ['Leadership', 'Management', 'Staff', 'Development', 'Testing'];
+    $matched = null;
+    foreach ((site_document()['staffRoles'] ?? []) as $staffRole) {
+        if (!is_array($staffRole)) {
+            continue;
+        }
+        $roleId = (string)($staffRole['id'] ?? '');
+        if ($roleId === '' || !in_array($roleId, $roleIds, true)) {
+            continue;
+        }
+        $tier = (string)($staffRole['tier'] ?? 'Staff');
+        if (!in_array($tier, $ladder, true)) {
+            $tier = 'Staff';
+        }
+        if ($matched === null || array_search($tier, $ladder, true) < array_search($matched['tier'], $ladder, true)) {
+            $matched = ['role' => (string)($staffRole['name'] ?? ''), 'tier' => $tier];
+        }
+    }
+
+    $pdo = database();
+    $pdo->prepare(
+        'UPDATE discord_role_checks SET checked_at = UTC_TIMESTAMP(), roles_json = :roles, ' .
+        'matched_role = :matched_role, staff_tier = :staff_tier WHERE discord_id = :discord_id'
+    )->execute([
+        'roles' => json_encode($roleIds),
+        'matched_role' => $matched['role'] ?? null,
+        'staff_tier' => $matched['tier'] ?? null,
+        'discord_id' => $discordId,
+    ]);
+    if ($matched === null) {
+        reply(200, ['ok' => true, 'staff' => false]);
+    }
+    bot_link_staff_account($discordId, $matched['role'], $matched['tier']);
+    reply(200, ['ok' => true, 'staff' => true, 'role' => $matched['role'], 'tier' => $matched['tier']]);
+}
+
+function bot_link_staff_account(string $discordId, string $roleName, string $tier): void
+{
+    $pdo = database();
+    $account = $pdo->prepare(
+        'SELECT discord_username, email FROM customer_accounts WHERE discord_id = :discord_id LIMIT 1'
+    );
+    $account->execute(['discord_id' => $discordId]);
+    $customer = $account->fetch();
+    $username = $customer ? (string)$customer['discord_username'] : '';
+    /* Staff usernames sign in with the same characters the owner
+       setup allows, so anything else a Discord name may contain
+       is folded to an underscore. */
+    $username = trim((string)preg_replace('/[^A-Za-z0-9_.-]+/', '_', $username));
+    if ($username === '') {
+        $username = 'staff-' . substr($discordId, -8);
+    }
+    $username = substr($username, 0, 64);
+    $email = $customer ? strtolower((string)$customer['email']) : '';
+
+    $existing = $pdo->prepare(
+        'SELECT id FROM staff_users WHERE discord_id = :discord_id LIMIT 1'
+    );
+    $existing->execute(['discord_id' => $discordId]);
+    $staffId = $existing->fetchColumn();
+    if ($staffId !== false) {
+        /* Already linked: keep the login, refresh the role. */
+        $pdo->prepare(
+            'UPDATE staff_users SET tier = :tier, title = :title, active = 1 WHERE id = :id'
+        )->execute(['tier' => $tier, 'title' => $roleName, 'id' => (string)$staffId]);
+        return;
+    }
+
+    if ($email !== '') {
+        $byEmail = $pdo->prepare('SELECT id, discord_id FROM staff_users WHERE email = :email LIMIT 1');
+        $byEmail->execute(['email' => $email]);
+        $owner = $byEmail->fetch();
+        if ($owner !== false) {
+            if ((string)$owner['discord_id'] === '') {
+                /* The member verified this email, so it belongs to
+                   them: link their Discord ID to the existing login. */
+                $pdo->prepare(
+                    'UPDATE staff_users SET discord_id = :discord_id, tier = :tier, ' .
+                    'title = :title, active = 1 WHERE id = :id'
+                )->execute([
+                    'discord_id' => $discordId, 'tier' => $tier, 'title' => $roleName,
+                    'id' => (string)$owner['id'],
+                ]);
+            }
+            /* Another account already owns this email; never hijack
+               it. The check is recorded, the link is not. */
+            return;
+        }
+    }
+
+    $staffId = bin2hex(random_bytes(16));
+    $insert = $pdo->prepare(
+        'INSERT INTO staff_users (id, username, username_key, email, password_hash, tier, title, active, discord_id, created_at) ' .
+        'VALUES (:id, :username, :username_key, :email, :password_hash, :tier, :title, 1, :discord_id, UTC_TIMESTAMP())'
+    );
+    $insert->execute([
+        'id' => $staffId,
+        'username' => $username,
+        'username_key' => strtolower($username),
+        'email' => $email,
+        'password_hash' => password_hash(bin2hex(random_bytes(32)), PASSWORD_DEFAULT),
+        'tier' => $tier,
+        'title' => $roleName,
+        'discord_id' => $discordId,
+    ]);
+    if ($email === '') {
+        return;
+    }
+    /* The login exists but the member has no password yet: send
+       the reset link to the email they verified so they can set
+       one and sign in to the panel. */
+    $token = bin2hex(random_bytes(32));
+    $pdo->prepare(
+        'INSERT INTO staff_password_resets (token_hash, staff_id, expires_at) ' .
+        'VALUES (:token, :staff_id, UTC_TIMESTAMP() + INTERVAL 20 MINUTE)'
+    )->execute(['token' => hash('sha256', $token), 'staff_id' => $staffId]);
+    $mail = settings()['mail'] ?? [];
+    $base = rtrim((string)(settings()['payments']['public_base_url'] ?? ''), '/');
+    if (!empty($mail['from']) && $base !== '') {
+        mail($email, 'Your Stitchline staff login',
+            'Welcome to the Stitchline staff panel. Set your password here: ' . $base . '/staff?reset=' . rawurlencode($token),
+            ['From' => (string)$mail['from'], 'Content-Type' => 'text/plain; charset=UTF-8']);
+    }
+}
+
 function bot_api_dispatch(string $route, string $method): never
 {
     $raw = file_get_contents('php://input');
@@ -322,6 +493,13 @@ function bot_api_dispatch(string $route, string $method): never
     if ($route === 'api/bot/settings' && $method === 'POST') {
         $body = json_decode($raw, true);
         bot_write_settings(is_array($body) ? $body : []);
+    }
+    if ($bot === 'community' && $route === 'api/bot/role-checks' && $method === 'GET') {
+        bot_role_checks_pending();
+    }
+    if ($bot === 'community' && $route === 'api/bot/role-checks' && $method === 'POST') {
+        $body = json_decode($raw, true);
+        bot_role_checks_report(is_array($body) ? $body : []);
     }
     if ($route === 'api/bot/records' && $method === 'GET') {
         bot_read_records();

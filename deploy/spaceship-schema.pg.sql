@@ -270,6 +270,18 @@ CREATE TABLE IF NOT EXISTS customer_sessions (
 
 CREATE INDEX IF NOT EXISTS customer_sessions_expiry ON customer_sessions (expires_at);
 
+CREATE TABLE IF NOT EXISTS discord_role_checks (
+    discord_id VARCHAR(20) NOT NULL PRIMARY KEY,
+    discord_username VARCHAR(100) NOT NULL DEFAULT '',
+    requested_at TIMESTAMP NOT NULL,
+    checked_at TIMESTAMP NULL,
+    roles_json TEXT NULL,
+    matched_role VARCHAR(100) NULL,
+    staff_tier VARCHAR(24) NULL
+);
+
+CREATE INDEX IF NOT EXISTS discord_role_checks_pending ON discord_role_checks (checked_at, requested_at);
+
 -- Supabase exposes public tables through its REST API; RLS with no policies blocks that.
 ALTER TABLE site_documents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE bot_heartbeats ENABLE ROW LEVEL SECURITY;
@@ -293,4 +305,5 @@ ALTER TABLE customer_accounts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE customer_roblox_links ENABLE ROW LEVEL SECURITY;
 ALTER TABLE customer_pending_logins ENABLE ROW LEVEL SECURITY;
 ALTER TABLE customer_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE discord_role_checks ENABLE ROW LEVEL SECURITY;
 

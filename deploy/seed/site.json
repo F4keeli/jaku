@@ -120,6 +120,7 @@
             "title": "Owner",
             "avatar": "/assets/Michael.jpg",
             "blurb": "Founder and studio lead.",
+            "quote": "a person must do what a person must do to survive",
             "discord_id": "201112412492005377",
             "has_login": false
           },
@@ -404,7 +405,8 @@
         "title": "Owner",
         "avatar": "/assets/Michael.jpg",
         "discord_id": "201112412492005377",
-        "blurb": "Founder and studio lead."
+        "blurb": "Founder and studio lead.",
+        "quote": "a person must do what a person must do to survive"
       },
       {
         "name": "RubiWisp",
@@ -412,33 +414,6 @@
         "avatar": "/assets/RubiWisp.png",
         "discord_id": "286899162639761411",
         "blurb": "Studio director."
-      }
-    ],
-    "credit_roles": [
-      {
-        "key": "developers",
-        "label": "Developers"
-      },
-      {
-        "key": "project_managers",
-        "label": "Project Managers"
-      },
-      {
-        "key": "testers",
-        "label": "Testers"
-      },
-      {
-        "key": "voice_actors",
-        "label": "Voice Actors"
-      }
-    ],
-    "credits": [
-      {
-        "game": "Beyond Lock",
-        "developers": [],
-        "project_managers": [],
-        "testers": [],
-        "voice_actors": []
       }
     ]
   },

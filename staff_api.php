@@ -1372,10 +1372,31 @@ function staff_panel_save_team(array $body, array $session): never
                 continue;
             }
             $hasLogin = !empty($member['has_login']) && isset($activeUsers[strtolower($name)]);
+            $discordId = clean_text($member['discord_id'] ?? '', 20, 'Discord ID');
+            if ($discordId !== '' && !preg_match('/^[0-9]{17,20}$/', $discordId)) {
+                $discordId = '';
+            }
+            /* The roster editor edits name, title, avatar, Discord ID and
+               login only, so a member's blurb is carried over from the
+               stored roster rather than blanked when the roster is saved. */
+            $stored = null;
+            foreach (($old['members'] ?? []) as $previous) {
+                if (!is_array($previous)) {
+                    continue;
+                }
+                $previousId = (string)($previous['discord_id'] ?? '');
+                if (($discordId !== '' && $previousId === $discordId) ||
+                    strtolower((string)($previous['name'] ?? '')) === strtolower($name)) {
+                    $stored = $previous;
+                    break;
+                }
+            }
             $members[] = [
                 'name' => $name,
                 'title' => clean_text($member['title'] ?? '', 80, 'Title'),
                 'avatar' => clean_text($member['avatar'] ?? '', 200, 'Avatar'),
+                'blurb' => clean_text($member['blurb'] ?? ($stored['blurb'] ?? ''), 300, 'Blurb'),
+                'discord_id' => $discordId,
                 'has_login' => $hasLogin,
             ];
         }

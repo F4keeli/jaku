@@ -16,6 +16,7 @@ HEARTBEAT_PATH = "/api/bot/heartbeat"
 FULFILLMENT_PATH = "/api/bot/fulfillment"
 RECORDS_PATH = "/api/bot/records"
 SETTINGS_PATH = "/api/bot/settings"
+ROLE_CHECKS_PATH = "/api/bot/role-checks"
 
 
 def request(method: str, path: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -101,3 +102,15 @@ def finish_fulfillment(reference: str, success: bool, error: str = "") -> dict[s
         "success": success,
         "error": error[:500],
     })
+
+
+def pending_role_checks() -> list[dict[str, Any]]:
+    """Return verified members whose Discord roles still need checking."""
+    result = request("GET", ROLE_CHECKS_PATH)
+    checks = result.get("checks", [])
+    return checks if isinstance(checks, list) else []
+
+
+def report_role_check(discord_id: str, roles: list[str]) -> dict[str, Any]:
+    """Report the roles a member holds so the site can match staff roles."""
+    return request("POST", ROLE_CHECKS_PATH, {"discord_id": discord_id, "roles": roles})

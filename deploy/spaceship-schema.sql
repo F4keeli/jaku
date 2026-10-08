@@ -257,6 +257,17 @@ CREATE TABLE IF NOT EXISTS customer_sessions (
     CONSTRAINT customer_session_user FOREIGN KEY (discord_id) REFERENCES customer_accounts(discord_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS discord_role_checks (
+    discord_id VARCHAR(20) NOT NULL PRIMARY KEY,
+    discord_username VARCHAR(100) NOT NULL DEFAULT '',
+    requested_at DATETIME NOT NULL,
+    checked_at DATETIME NULL,
+    roles_json JSON NULL,
+    matched_role VARCHAR(100) NULL,
+    staff_tier VARCHAR(24) NULL,
+    INDEX discord_role_checks_pending (checked_at, requested_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS staff_clock_events (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     staff_id VARCHAR(32) NOT NULL,

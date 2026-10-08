@@ -423,6 +423,17 @@ function account_verify(array $body): never
         );
         $save->execute(['id'=>$pending['discord_id'],'username'=>$pending['discord_username'],'avatar'=>$pending['avatar_url'],'email'=>$pending['email'],'phone'=>'']);
         $pdo->prepare('DELETE FROM customer_pending_logins WHERE token_hash = :token')->execute(['token'=>hash('sha256',$raw)]);
+        /* The bot watches this queue and reports the member's Discord
+           roles back, so a verified member who holds a studio role is
+           linked to a staff login without anyone editing the roster by
+           hand. Re-verifying re-queues the check. */
+        $pdo->prepare(
+            'INSERT INTO discord_role_checks (discord_id, discord_username, requested_at) ' .
+            'VALUES (:id, :username, UTC_TIMESTAMP()) ' .
+            'ON DUPLICATE KEY UPDATE discord_username = VALUES(discord_username), ' .
+            'requested_at = UTC_TIMESTAMP(), checked_at = NULL, roles_json = NULL, ' .
+            'matched_role = NULL, staff_tier = NULL'
+        )->execute(['id'=>$pending['discord_id'],'username'=>$pending['discord_username']]);
         $pdo->commit();
     } catch (Throwable $error) { if ($pdo->inTransaction()) $pdo->rollBack(); throw $error; }
     $session=account_create_session((string)$pending['discord_id']);

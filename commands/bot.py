@@ -55,6 +55,7 @@ class StitchlineBot(commands.Bot):
         self.pool: aiomysql.Pool | None = None
         self.heartbeat_task: asyncio.Task | None = None
         self.fulfillment_task: asyncio.Task | None = None
+        self.role_check_task: asyncio.Task | None = None
         from Core import moderation_bot
 
         moderation_bot.attach(self)
@@ -82,6 +83,8 @@ class StitchlineBot(commands.Bot):
             self.heartbeat_task = asyncio.create_task(self.heartbeat_loop())
         if self.fulfillment_task is None or self.fulfillment_task.done():
             self.fulfillment_task = asyncio.create_task(self.fulfillment_loop())
+        if self.role_check_task is None or self.role_check_task.done():
+            self.role_check_task = asyncio.create_task(self.role_check_loop())
 
     async def heartbeat_loop(self) -> None:
         from Core import config
@@ -132,11 +135,41 @@ class StitchlineBot(commands.Bot):
                 print(f"[Stitchline Interactive] order fulfillment unavailable: {error}", flush=True)
             await asyncio.sleep(20)
 
+    async def role_check_loop(self) -> None:
+        from bots.site_api import pending_role_checks, report_role_check
+
+        while not self.is_closed():
+            if not os.getenv("STITCHLINE_SITE_URL") or not os.getenv("STITCHLINE_BOT_API_SECRET"):
+                await asyncio.sleep(30)
+                continue
+            try:
+                for check in pending_role_checks():
+                    discord_id = str(check.get("discord_id") or "")
+                    if not discord_id.isdigit():
+                        continue
+                    roles: list[str] = []
+                    for guild in self.guilds:
+                        try:
+                            member = guild.get_member(int(discord_id))
+                            if member is None:
+                                member = await guild.fetch_member(int(discord_id))
+                        except Exception:
+                            continue
+                        if member is not None:
+                            roles = [str(role.id) for role in member.roles]
+                            break
+                    report_role_check(discord_id, roles)
+            except Exception as error:  # noqa: BLE001 - background loop must not crash
+                print(f"[Stitchline Interactive] role checks unavailable: {error}", flush=True)
+            await asyncio.sleep(30)
+
     async def close(self) -> None:
         if self.heartbeat_task and not self.heartbeat_task.done():
             self.heartbeat_task.cancel()
         if self.fulfillment_task and not self.fulfillment_task.done():
             self.fulfillment_task.cancel()
+        if self.role_check_task and not self.role_check_task.done():
+            self.role_check_task.cancel()
         if self.pool is not None:
             self.pool.close()
             await self.pool.wait_closed()

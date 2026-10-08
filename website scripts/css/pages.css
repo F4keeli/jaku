@@ -130,55 +130,6 @@
 .role--held { border-color: var(--line-strong); color: var(--ink); }
 
 /* ---------------------------------------------------------
-   Game credits
-   ---------------------------------------------------------
-   A disclosure per game, a group per role inside it. <details> rather than a
-   scripted dropdown: it opens with the keyboard, it works before the scripts
-   run, and it stays open when the network is slow. */
-.credits { margin-top: var(--s8); }
-.credits__list-games { display: grid; gap: 0.7rem; }
-.credits__game {
-  border: 1px solid var(--line);
-  border-radius: var(--rad);
-  background: var(--panel);
-}
-.credits__summary {
-  display: flex; align-items: center; gap: 0.7rem;
-  padding: 0.9rem 1.1rem;
-  cursor: pointer;
-  list-style: none;
-  font-family: var(--font-display);
-  font-size: 1rem;
-  color: var(--ink);
-}
-.credits__summary::-webkit-details-marker { display: none; }
-/* A chevron that points where the disclosure actually is, rather than an arrow
-   that stays pointing right when the content is already open. */
-.credits__summary::after {
-  content: "›";
-  margin-left: auto;
-  color: var(--text-mute);
-  transition: transform 0.25s var(--ease);
-  display: inline-block;
-}
-.credits__game[open] .credits__summary::after { transform: rotate(90deg); }
-.credits__summary:hover { border-radius: var(--rad); background: rgba(255, 255, 255, 0.03); }
-.credits__body {
-  padding: 0 1.1rem 1.1rem;
-  border-top: 1px solid var(--line-soft);
-  display: grid; gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-}
-.credits__group { padding-top: 0.9rem; }
-.credits__group h4 {
-  font-family: var(--font-mono); font-size: 0.58rem;
-  letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-mute);
-  margin-bottom: 0.5rem;
-}
-.credits__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.3rem; }
-.credit { font-size: 0.88rem; color: var(--text-dim); }
-
-/* ---------------------------------------------------------
    Sneak peeks
    --------------------------------------------------------- */
 .sneaks {

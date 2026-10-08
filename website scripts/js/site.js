@@ -248,10 +248,11 @@
 
   /* Released sneak peeks, as a disclosure on the card they belong to.
 
-     A <details> element for the same reason the credits use one, and for a
-     second one: a peek is a link out to a video, so it has to be a real anchor
-     with a real href, not a click handler on a div. Nothing is printed when a
-     title has no peeks, rather than printing an empty button that opens
+     A <details> element so it is keyboard accessible, works before the
+     scripts have run, and stays open when the network is slow. A peek is
+     a link out to a video, so it has to be a real anchor with a real
+     href, not a click handler on a div. Nothing is printed when a title
+     has no peeks, rather than printing an empty button that opens
      nothing. */
   function sneakpeeks(game) {
     var peeks = game.sneakpeeks || [];
@@ -273,63 +274,6 @@
       '</summary>' +
       '<ul class="sneaks__list">' + items + '</ul>' +
     '</details>';
-  }
-
-  /* Game credits, one disclosure per game.
-
-     A <details> element rather than a scripted dropdown: it is keyboard
-     accessible, it works with the page before the scripts have run, and it
-     stays open when the network is slow - none of which a hidden div that only
-     opens on a click gets. Each game is credited by role, and a role nobody
-     filled in is not printed at all, so a half-finished credits list looks
-     half-finished rather than padded with empty headings. */
-  function creditsBlock(team) {
-    var credits = (team && team.credits) || [];
-    if (!credits.length) return '';
-    var roles = (team && team.credit_roles) || [
-      { key: 'developers', label: 'Developers' },
-      { key: 'project_managers', label: 'Project Managers' },
-      { key: 'testers', label: 'Testers' },
-      { key: 'voice_actors', label: 'Voice Actors' }
-    ];
-
-    var games = credits.map(function (entry, index) {
-      var groups = roles.map(function (role) {
-        var names = (entry[role.key] || []).map(function (person) {
-          return '<li class="credit">' + esc(person.name || '') +
-            (person.role ? ' <span class="muted small">' + esc(person.role) + '</span>' : '') +
-            '</li>';
-        }).join('');
-        /* A role with nobody in it is skipped. Showing "Voice Actors" above an
-           empty list implies the work exists and the names are missing. */
-        return names ? '<div class="credits__group"><h4>' + esc(role.label) +
-          '</h4><ul class="credits__list">' + names + '</ul></div>' : '';
-      }).join('');
-
-      var total = roles.reduce(function (sum, role) {
-        return sum + ((entry[role.key] || []).length);
-      }, 0);
-
-      return '<details class="credits__game"' + (index === 0 ? ' open' : '') + '>' +
-        '<summary class="credits__summary">' +
-          '<span class="credits__title">' + esc(entry.game || 'Untitled') + '</span>' +
-          '<span class="pill">' + (total === 1 ? '1 credit' : total + ' credits') + '</span>' +
-        '</summary>' +
-        (groups ? '<div class="credits__body">' + groups + '</div>'
-                : '<div class="credits__body">' +
-                  SI.empty('No credits listed yet',
-                    'Nobody is credited on this one yet. Add them from the panel.') +
-                  '</div>') +
-      '</details>';
-    }).join('');
-
-    return '<section class="tier reveal credits">' +
-      '<div class="tier__head"><h2 class="tier__name">Game Credits</h2>' +
-        '<span class="tier__count">' + credits.length + '</span></div>' +
-      '<p class="tier__blurb">Who built what. Open a title to see the team ' +
-        'behind it, by role.</p>' +
-      '<div class="credits__list-games">' + games + '</div>' +
-    '</section>';
   }
 
   /* ---------------------------------------------------------
@@ -379,6 +323,7 @@
               '<p class="person__rank">' + rank + '</p>' +
               discordProfile +
               (member.blurb ? '<p class="person__blurb">' + esc(member.blurb) + '</p>' : '') +
+              (member.quote ? '<p class="person__quote">&ldquo;' + esc(member.quote) + '&rdquo;</p>' : '') +
             '</div>' +
           '</div>';
         }).join('');
@@ -413,7 +358,6 @@
           '<p class="muted small" style="margin-bottom:1.2rem">Hierarchy: ' +
           esc(hierarchy.join(' › ')) + '</p>');
       }
-      list.insertAdjacentHTML('beforeend', creditsBlock(team));
       SI.observeReveal(list);
     }).catch(function (err) {
       list.innerHTML = SI.empty('Could not load the roster', err.message);

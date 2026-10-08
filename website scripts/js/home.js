@@ -414,6 +414,7 @@
           '<h3 class="founder__name">' + SI.esc(person.name) + '</h3>' +
           discordProfile +
           '<p class="founder__blurb">' + SI.esc(person.blurb || '') + '</p>' +
+          (person.quote ? '<p class="founder__quote">&ldquo;' + SI.esc(person.quote) + '&rdquo;</p>' : '') +
         '</div></article>';
     }).join('');
     SI.observeReveal(wrap);
