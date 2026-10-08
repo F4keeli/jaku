@@ -207,7 +207,7 @@
 .announce__nav button:hover { color: #000; border-color: var(--ink); background: var(--ink); }
 
 /* ---------------------------------------------------------
-   02 FEATURED GAME
+   03 FEATURED GAME
    --------------------------------------------------------- */
 .feature {
   display: grid; gap: clamp(1.6rem, 4vw, 3.2rem);
@@ -319,7 +319,7 @@
 @keyframes artScan { 0% { transform: translateY(-6%); } 100% { transform: translateY(6%); } }
 
 /* ---------------------------------------------------------
-   01 ABOUT
+   02 ABOUT
    --------------------------------------------------------- */
 .section__prose {
   max-width: var(--measure);
@@ -331,7 +331,7 @@
 }
 
 /* ---------------------------------------------------------
-   03 VALUES vs PLAYERS
+   05 VALUES vs PLAYERS
    --------------------------------------------------------- */
 .row-label {
   display: flex; align-items: center; gap: 0.8rem;
@@ -359,7 +359,7 @@
 }
 
 /* ---------------------------------------------------------
-   04 / 05 TEAMS + GOALS
+   04 FOUNDERS + 06 GOALS
    --------------------------------------------------------- */
 .section--team { background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.02), transparent); }
 .section--goals { padding-bottom: clamp(4rem, 9vw, 7rem); }
