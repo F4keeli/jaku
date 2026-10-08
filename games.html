@@ -40,7 +40,7 @@
       <a class="nav__link" href="/">Home</a>
       <a class="nav__link" href="/games.html">Games</a>
       <a class="nav__link" href="/team.html">Team</a>
-      <a class="nav__link" href="/contact.html">Suggestions</a>
+      <a class="nav__link" href="/contact.html">Contact</a>
       <a class="nav__link" href="/store.html">Store</a>
       <a class="nav__link" href="/application.html">Application</a>
     </nav>
@@ -73,7 +73,16 @@
         <div class="page__bar">
           <span class="tag mono" id="gameNote">Loading…</span>
         </div>
-        <div class="grid" id="gameList" style="margin-top:1.6rem"></div>
+        <div class="tabs" role="tablist" style="margin-top:1.5rem" id="platformTabs">
+          <button class="tab is-on" type="button" data-tab="roblox" role="tab">Roblox</button>
+          <button class="tab" type="button" data-tab="steam" role="tab">Steam&nbsp;<span class="tag" style="margin-left:.35rem">Coming soon</span></button>
+        </div>
+        <div class="tabpanel" data-panel="roblox" style="margin-top:1.6rem">
+          <div class="grid" id="gameList"></div>
+        </div>
+        <div class="tabpanel" data-panel="steam" hidden style="margin-top:1.6rem">
+          <div id="steamList"></div>
+        </div>
         </div>
     </div>
   </section>
@@ -87,9 +96,9 @@
     </div>
     <p class="footer__copy">&copy; 2026 Stitchline Interactive. All rights reserved.</p>
     <nav class="footer__links" aria-label="Footer">
-      <button class="footer__link" type="button" data-modal="terms">Terms</button>
       <button class="footer__link" type="button" data-modal="privacy">Privacy</button>
-      <a class="footer__link" href="/contact.html">Suggestions</a>
+      <button class="footer__link" type="button" data-modal="terms">Terms of Service</button>
+      <a class="footer__link" href="/staff.html">Staff</a>
     </nav>
   </div>
 </footer>

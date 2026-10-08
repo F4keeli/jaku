@@ -520,6 +520,11 @@ function staff_panel_registry(array $session): never
     staff_require_session();
     $sections = [
         ['id' => 'dashboard', 'label' => 'Dashboard', 'subs' => []],
+        ['id' => 'staff-terms', 'label' => 'Staff Terms', 'subs' => []],
+        ['id' => 'clock-in-out', 'label' => 'Clock In / Out', 'subs' => []],
+        ['id' => 'team-chat', 'label' => 'Team Chat', 'subs' => []],
+        ['id' => 'team-voice', 'label' => 'Team Voice', 'subs' => []],
+        ['id' => 'break-requests', 'label' => 'Break Requests', 'subs' => []],
         ['id' => 'web-config', 'label' => 'Web Configuration', 'subs' => []],
         ['id' => 'web-announcements', 'label' => 'Web Announcements', 'subs' => []],
         ['id' => 'staff-announcements', 'label' => 'Staff Announcements', 'subs' => []],
@@ -551,6 +556,7 @@ function staff_panel_registry(array $session): never
         ['id' => 'staff', 'label' => 'Staff Overview', 'subs' => []],
         ['id' => 'development', 'label' => 'Development Overview', 'subs' => []],
         ['id' => 'leadership', 'label' => 'Leadership Overview', 'subs' => []],
+        ['id' => 'leadership-dashboard', 'label' => 'Leadership Dashboard', 'subs' => []],
     ];
     $routes = [];
     foreach ($sections as $section) {
@@ -883,6 +889,101 @@ function staff_panel_route(string $route, array $session): never
             'team' => is_array($site['team'] ?? null) ? $site['team'] : [],
             'tiers' => ['Leadership', 'Management', 'Staff', 'Development', 'Testing'],
             'hint' => 'Only people with an active website login can be shown on the public team page.',
+        ]);
+    }
+    if ($route === 'staff-terms') {
+        staff_require_session();
+        reply(200, [
+            'route' => $route,
+            'status' => 'ok',
+            'view' => 'staff-terms',
+            'kind' => $route,
+            'label' => 'Staff Terms',
+            'tier' => 'Staff',
+            'writable' => staff_can_tier($user, 'Leadership'),
+            'terms' => staff_terms_content(),
+            'ranks' => staff_rank_ladder(),
+        ]);
+    }
+    if ($route === 'clock-in-out') {
+        staff_require_session();
+        reply(200, [
+            'route' => $route,
+            'status' => 'ok',
+            'view' => 'clock',
+            'kind' => $route,
+            'label' => 'Clock In / Out',
+            'tier' => 'Staff',
+            'writable' => true,
+            'clock' => staff_clock_state($session),
+            'history' => staff_clock_history($session['user']['id'], 12),
+            'active' => staff_clock_active_sessions(),
+            'payRates' => staff_pay_rates(),
+            'isDevelopment' => staff_is_development($session['user']),
+        ]);
+    }
+    if ($route === 'team-chat') {
+        staff_require_session();
+        reply(200, [
+            'route' => $route,
+            'status' => 'ok',
+            'view' => 'chat',
+            'kind' => $route,
+            'label' => 'Team Chat',
+            'tier' => 'Staff',
+            'writable' => true,
+            'threads' => staff_chat_threads($session['user']['id']),
+            'people' => staff_chat_people($session['user']['id']),
+        ]);
+    }
+    if ($route === 'team-voice') {
+        staff_require_session();
+        reply(200, [
+            'route' => $route,
+            'status' => 'ok',
+            'view' => 'voice',
+            'kind' => $route,
+            'label' => 'Team Voice',
+            'tier' => 'Staff',
+            'writable' => staff_can_tier($user, 'Leadership'),
+            'rooms' => staff_voice_rooms(),
+            'webrtc' => staff_webrtc_status(),
+        ]);
+    }
+    if ($route === 'break-requests') {
+        staff_require_session();
+        reply(200, [
+            'route' => $route,
+            'status' => 'ok',
+            'view' => 'breaks',
+            'kind' => $route,
+            'label' => 'Break Requests',
+            'tier' => 'Staff',
+            'writable' => true,
+            'mine' => staff_break_requests((string)$session['user']['id']),
+            'queue' => staff_can_tier($user, 'Leadership') ? staff_break_requests(null) : [],
+            'canApprove' => staff_can_tier($user, 'Leadership'),
+        ]);
+    }
+    if ($route === 'leadership-dashboard') {
+        staff_require_tier($session, 'Leadership');
+        if (in_array((string)$user['tier'], ['Development', 'Testing'], true)) {
+            reply(403, ['error' => 'insufficient_rank', 'message' => 'The leadership dashboard is for Supervisor Of Staff and above, excluding development roles.']);
+        }
+        reply(200, [
+            'route' => $route,
+            'status' => 'ok',
+            'view' => 'leadership-dashboard',
+            'kind' => $route,
+            'label' => 'Leadership Dashboard',
+            'tier' => 'Leadership',
+            'clock' => staff_clock_state($session),
+            'active' => staff_clock_active_sessions(),
+            'missing' => staff_clock_missing(),
+            'breaks' => staff_break_requests(null),
+            'payRates' => staff_pay_rates(),
+            'terms' => staff_terms_content(),
+            'counts' => staff_leadership_counts(),
         ]);
     }
     $collection = staff_collection_routes()[$route] ?? null;

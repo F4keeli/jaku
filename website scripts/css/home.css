@@ -319,6 +319,18 @@
 @keyframes artScan { 0% { transform: translateY(-6%); } 100% { transform: translateY(6%); } }
 
 /* ---------------------------------------------------------
+   01 ABOUT
+   --------------------------------------------------------- */
+.section__prose {
+  max-width: var(--measure);
+  margin: 0 auto;
+  color: var(--text-dim);
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+  line-height: 1.8;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------
    03 VALUES vs PLAYERS
    --------------------------------------------------------- */
 .row-label {

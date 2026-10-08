@@ -73,6 +73,9 @@ class StitchlineBot(commands.Bot):
                 maxsize=5,
             )
         await self.tree.sync()
+        from Core.wallet import Wallet
+
+        Wallet.attach(self.pool)
 
     async def on_ready(self) -> None:
         if self.heartbeat_task is None or self.heartbeat_task.done():
@@ -182,6 +185,23 @@ def register_community_commands(bot: StitchlineBot) -> None:
         latency = round(bot.latency * 1000)
         await context.reply(embed=embed("Connection", f"Gateway latency: `{latency} ms`"), mention_author=False)
 
+    @bot.command(name="serverinfo")
+    async def serverinfo_command(context: commands.Context) -> None:
+        guild = context.guild
+        if guild is None:
+            await context.reply(embed=embed("Server info unavailable", "Run this command inside the server."), mention_author=False)
+            return
+        created = discord.utils.snowflake_time(guild.id)
+        description = (
+            f"**{guild.name}**\n"
+            f"Members: `{guild.member_count or 0}`\n"
+            f"Roles: `{len(guild.roles)}`\n"
+            f"Channels: `{len(guild.text_channels)}` text · `{len(guild.voice_channels)}` voice\n"
+            f"Created: <t:{int(created.timestamp())}:D>\n"
+            f"Verification: `{guild.verification_level}`"
+        )
+        await context.reply(embed=embed("Server information", description), mention_author=False)
+
     @bot.tree.command(name="suggest", description="Send a suggestion to the Stitchline team")
     @app_commands.describe(suggestion="A suggestion for the community or studio")
     async def suggest(interaction: discord.Interaction, suggestion: app_commands.Range[str, 5, 1000]) -> None:
@@ -202,7 +222,7 @@ def register_community_commands(bot: StitchlineBot) -> None:
             return
         from Core.wallet import lookup
 
-        account = lookup(interaction.user.id)
+        account = await lookup(interaction.user.id)
         await interaction.response.send_message(embed=embed("Your balance", f"`{account['blocks']:,}` StitchBlocks"), ephemeral=True)
 
     @bot.tree.command(name="store", description="View the Stitchline community store")
@@ -263,6 +283,57 @@ def register_community_commands(bot: StitchlineBot) -> None:
     @bot.tree.command(name="music", description="Music playback status")
     async def music(interaction: discord.Interaction) -> None:
         await interaction.response.send_message(embed=embed("Music unavailable", "Music playback requires an approved audio provider."), ephemeral=True)
+
+    @bot.tree.command(name="userinfo", description="View a member's information")
+    @app_commands.describe(member="The member to look up")
+    async def userinfo(interaction: discord.Interaction, member: discord.Member | None = None) -> None:
+        target = member or interaction.user
+        created = discord.utils.snowflake_time(target.created_at)
+        joined = discord.utils.snowflake_time(target.joined_at) if target.joined_at else None
+        roles = [role.mention for role in getattr(target, "roles", []) if not role.is_default()]
+        description = (
+            f"**{target.display_name}**\n"
+            f"Username: `{target.name}`\n"
+            f"ID: `{target.id}`\n"
+            f"Account created: <t:{int(created.timestamp())}:R>\n"
+            + (f"Joined: <t:{int(joined.timestamp())}:R>\n" if joined else "")
+            + (f"Roles: {' '.join(roles[:10]) if roles else 'None'}" if roles else "Roles: None")
+        )
+        if target.avatar:
+            description = f"[Avatar]({target.avatar.url})\n" + description
+        await interaction.response.send_message(embed=embed("Member information", description), ephemeral=True)
+
+    @bot.tree.command(name="case", description="Look up a moderation case by number")
+    @app_commands.describe(number="The case number, for example 12 for C-12")
+    @app_commands.checks.has_permissions(moderate_members=True)
+    async def case_command(interaction: discord.Interaction, number: app_commands.Range[int, 1, 999999]) -> None:
+        from bots.site_api import request as site_request
+
+        try:
+            result = site_request("GET", "/api/bot/records?kind=cases&limit=1000")
+        except RuntimeError:
+            await interaction.response.send_message(embed=embed("Cases unavailable", "The moderation log could not be reached."), ephemeral=True)
+            return
+        wanted = f"C-{number}"
+        record = next(
+            (row for row in result.get("records", [])
+             if isinstance(row, dict) and str(row.get("ref") or "") == wanted),
+            None,
+        )
+        if record is None:
+            await interaction.response.send_message(embed=embed("Case not found", f"No case matches `{wanted}`."), ephemeral=True)
+            return
+        fields = [
+            ("Member", f"{record.get('user_name', 'Unknown')} <@{record.get('user_id', '')}>" if record.get("user_id") else str(record.get("user_name", "Unknown"))),
+            ("Action", str(record.get("kind", "unknown")).capitalize()),
+            ("Reason", str(record.get("reason", "Not provided."))[:1024]),
+            ("By", str(record.get("moderator_name", "Unknown"))),
+            ("State", str(record.get("status", "unknown"))),
+        ]
+        card = embed(f"Case {wanted}", f"**{fields[1][1]}** — {fields[2][1]}")
+        for name, value in fields:
+            card.add_field(name=name, value=value[:1024], inline=False)
+        await interaction.response.send_message(embed=card, ephemeral=True)
 
     voice = app_commands.Group(name="vc", description="Manage temporary community voice rooms")
 

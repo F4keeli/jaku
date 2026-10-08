@@ -91,6 +91,8 @@
               '<span><b>' + SI.esc(username) + '</b><small class="mono">' + SI.esc(id) + '</small></span></div>' +
             '<a role="menuitem" href="/account.html">Dashboard</a>' +
             '<a role="menuitem" href="/account.html#paymentHeading">Saved payment methods</a>' +
+            '<a role="menuitem" href="/account.html#subscriptionHeading">Subscription</a>' +
+            '<a role="menuitem" href="/account.html#statusHeading">Status</a>' +
             (state.staff ? '<a role="menuitem" href="/staff.html">Staff login</a>' : '') +
             '<button role="menuitem" type="button" data-account-logout>Sign out</button>' +
           '</div>';

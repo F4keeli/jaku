@@ -31,7 +31,7 @@
       <a class="nav__link" href="/">Home</a>
       <a class="nav__link" href="/games.html">Games</a>
       <a class="nav__link" href="/team.html">Team</a>
-      <a class="nav__link" href="/contact.html">Suggestions</a>
+      <a class="nav__link" href="/contact.html">Contact</a>
       <a class="nav__link" href="/store.html">Store</a>
       <a class="nav__link" href="/application.html">Application</a>
       <a class="nav__link is-active" href="/account.html">Account</a>
@@ -101,6 +101,15 @@
       <p class="muted small" id="robloxStatus">Link Roblox to verify your identity for staff access.</p>
       <a class="btn btn--ghost" id="connectRoblox" href="/api/account/roblox/connect"><span>Link Roblox account</span></a>
     </section>
+    <section class="account-section" aria-labelledby="subscriptionHeading">
+      <h2 id="subscriptionHeading">Subscription</h2>
+      <p class="muted small" id="subscriptionStatus">No active subscription.</p>
+      <div class="account-list" id="accountSubscription"></div>
+    </section>
+    <section class="account-section" aria-labelledby="statusHeading">
+      <h2 id="statusHeading">Status</h2>
+      <dl class="account-details" id="statusDetails"></dl>
+    </section>
     <section class="account-section" aria-labelledby="staffHeading" id="staffSection" hidden>
       <h2 id="staffHeading">Staff account</h2>
       <dl class="account-details" id="staffDetails"></dl>
@@ -138,9 +147,9 @@
     </div>
     <p class="footer__copy">&copy; 2026 Stitchline Interactive. All rights reserved.</p>
     <nav class="footer__links" aria-label="Footer">
-      <button class="footer__link" type="button" data-modal="terms">Terms</button>
       <button class="footer__link" type="button" data-modal="privacy">Privacy</button>
-      <a class="footer__link" href="/contact.html">Suggestions</a>
+      <button class="footer__link" type="button" data-modal="terms">Terms of Service</button>
+      <a class="footer__link" href="/staff.html">Staff</a>
     </nav>
   </div>
 </footer>

@@ -9,18 +9,24 @@
       "enabled": {
         "help": true,
         "ticketeta": true,
+        "website": true,
+        "ping": true,
+        "serverinfo": true,
         "suggest": true,
         "balance": true,
         "store": true,
         "level": true,
-        "ticket": true
+        "ticket": true,
+        "userinfo": true,
+        "case": true
       }
     },
     "prefixCommands": [
       { "name": "help", "trigger": "?help", "configurable": true },
       { "name": "ticketeta", "trigger": "?ticketeta", "configurable": true },
       { "name": "website", "trigger": "?website", "configurable": false },
-      { "name": "ping", "trigger": "?ping", "configurable": false }
+      { "name": "ping", "trigger": "?ping", "configurable": false },
+      { "name": "serverinfo", "trigger": "?serverinfo", "configurable": false }
     ],
     "slashCommands": [
       { "name": "suggest", "configurable": true },
@@ -35,15 +41,31 @@
         "configurable": false,
         "subcommands": ["creation", "configuration", "delete"]
       },
-      { "name": "music", "configurable": false }
+      { "name": "music", "configurable": false },
+      { "name": "userinfo", "configurable": false },
+      { "name": "case", "configurable": false, "parameters": ["number"] }
     ]
   },
   "moderation": {
     "displayName": "Stitchline Interactive",
     "slashCommands": [
-      { "name": "kick" },
-      { "name": "ban" },
-      { "name": "timeout" }
+      { "name": "kick", "parameters": ["member", "reason"] },
+      { "name": "ban", "parameters": ["member", "reason"] },
+      { "name": "timeout", "parameters": ["member", "minutes", "reason"] },
+      { "name": "unban", "parameters": ["user", "reason"] },
+      {
+        "name": "giveaway",
+        "subcommands": ["create", "edit", "reroll"]
+      },
+      { "name": "rank", "parameters": ["member", "role"] },
+      { "name": "unrank", "parameters": ["member", "role"] },
+      { "name": "bulkrank", "parameters": ["role", "members"] },
+      { "name": "bulkunrank", "parameters": ["role", "members"] },
+      { "name": "blacklist", "parameters": ["user", "reason"] },
+      { "name": "warn", "parameters": ["member", "reason"] },
+      { "name": "unwarn", "parameters": ["case_id"] },
+      { "name": "note", "parameters": ["member", "note"] },
+      { "name": "purge", "parameters": ["count", "channel"] }
     ]
   },
   "responseStyle": "embedded-clean-message"

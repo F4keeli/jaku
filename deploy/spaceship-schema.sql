@@ -256,3 +256,74 @@ CREATE TABLE IF NOT EXISTS customer_sessions (
     INDEX customer_sessions_expiry (expires_at),
     CONSTRAINT customer_session_user FOREIGN KEY (discord_id) REFERENCES customer_accounts(discord_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS staff_clock_events (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    staff_id VARCHAR(32) NOT NULL,
+    clocked_in_at DATETIME NOT NULL,
+    clock_in_reason VARCHAR(500) NOT NULL,
+    clocked_out_at DATETIME NULL,
+    clock_out_reason VARCHAR(500) NULL,
+    hourly_rate DECIMAL(10,2) UNSIGNED NULL,
+    task_title VARCHAR(180) NULL,
+    task_approved TINYINT(1) NOT NULL DEFAULT 0,
+    task_deadline DATETIME NULL,
+    payment_minor_units BIGINT UNSIGNED NOT NULL DEFAULT 0,
+    INDEX clock_staff_open (staff_id, clocked_out_at),
+    INDEX clock_history (staff_id, clocked_in_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS staff_break_requests (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    staff_id VARCHAR(32) NOT NULL,
+    reason VARCHAR(1000) NOT NULL,
+    starts_at DATETIME NULL,
+    ends_at DATETIME NULL,
+    status VARCHAR(24) NOT NULL DEFAULT 'pending',
+    reviewed_by VARCHAR(32) NULL,
+    review_note VARCHAR(1000) NULL,
+    reviewed_at DATETIME NULL,
+    created_at DATETIME NOT NULL,
+    INDEX break_queue (status, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS staff_chat_rooms (
+    room_key VARCHAR(64) NOT NULL PRIMARY KEY,
+    staff_a VARCHAR(32) NOT NULL,
+    staff_b VARCHAR(32) NOT NULL,
+    created_at DATETIME NOT NULL,
+    last_at DATETIME NOT NULL,
+    INDEX chat_room_a (staff_a, last_at),
+    INDEX chat_room_b (staff_b, last_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS staff_chat_messages (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    room_key VARCHAR(64) NOT NULL,
+    staff_id VARCHAR(32) NOT NULL,
+    body TEXT NOT NULL,
+    at DATETIME NOT NULL,
+    read_by TEXT NULL,
+    INDEX chat_history (room_key, at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS staff_voice_rooms (
+    room_key VARCHAR(64) NOT NULL PRIMARY KEY,
+    label VARCHAR(120) NOT NULL,
+    created_by VARCHAR(32) NOT NULL,
+    configuration TEXT NOT NULL,
+    created_at DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS bot_notifications (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    discord_user_id VARCHAR(20) NOT NULL,
+    kind VARCHAR(40) NOT NULL,
+    title VARCHAR(160) NOT NULL,
+    body TEXT NOT NULL,
+    status VARCHAR(24) NOT NULL DEFAULT 'pending',
+    attempts TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL,
+    delivered_at DATETIME NULL,
+    INDEX notification_queue (status, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

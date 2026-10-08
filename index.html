@@ -47,7 +47,7 @@
       <a class="nav__link is-active" href="/" data-nav="home">Home</a>
       <a class="nav__link" href="/games.html">Games</a>
       <a class="nav__link" href="/team.html">Team</a>
-      <a class="nav__link" href="/contact.html">Suggestions</a>
+      <a class="nav__link" href="/contact.html">Contact</a>
       <a class="nav__link" href="/store.html">Store</a>
       <a class="nav__link" href="/application.html">Application</a>
     </nav>
@@ -120,57 +120,33 @@
       </dl>
     </div>
 
-    <a class="scroll-cue" href="#announcements" aria-label="Scroll down"><span></span></a>
+    <a class="scroll-cue" href="#about" aria-label="Scroll down"><span></span></a>
   </section>
 
   <div class="divider" aria-hidden="true"><span data-glitch-divider></span></div>
 
-  <!-- ============ 1. ANNOUNCEMENTS ============ -->
-  <section class="section" id="announcements">
+  <!-- ============ 1. ABOUT ============ -->
+  <section class="section" id="about">
     <div class="wrap">
       <header class="section__head">
         <p class="section__index">01</p>
-        <h2 class="section__title" data-glitch="Announcements">Announcements</h2>
-        <p class="section__desc">Direct signals from the studio. Each update stays live for 14 days so nothing gets buried.</p>
+        <h2 class="section__title" data-glitch="About the Studio">About the Studio</h2>
       </header>
-      <div class="announce" id="announceWrap">
-        <div class="announce__dots" id="announceDots" role="tablist" aria-label="Announcements"></div>
-        <div class="announce__panel" id="announcePanel" role="tabpanel"></div>
-      </div>
+      <p class="section__prose">Stitchline Interactive is an independent game studio founded and led by Michael, focused on developing high-performance, mechanically precise titles like Beyond Lock. The studio operates under a professional, structured framework utilizing clear developer accountability, milestone-based workflows, and clean technical architecture to deliver polished, competitive multiplayer experiences.</p>
     </div>
   </section>
 
   <div class="divider" aria-hidden="true"><span data-glitch-divider></span></div>
 
-  <!-- ============ 2. FEATURED GAME ============ -->
-  <section class="section" id="featured">
+  <!-- ============ 2. GOALS ============ -->
+  <section class="section section--goals" id="goals">
     <div class="wrap">
       <header class="section__head">
         <p class="section__index">02</p>
-        <h2 class="section__title" data-glitch="Featured Game">Featured Game</h2>
+        <h2 class="section__title" data-glitch="Our Goals">Our Goals</h2>
+        <p class="section__desc">The commitments we hold ourselves to this year.</p>
       </header>
-
-      <article class="feature">
-        <div class="feature__body">
-          <div class="feature__badges">
-            <span class="tag tag--live" id="featureStatus">In Production</span>
-            <span class="tag">Featured Game</span>
-            <span class="tag tag--ghost">Estimated Release: <b id="featureEta">TBA</b></span>
-          </div>
-          <h3 class="feature__name" data-glitch="Beyond Lock">Beyond Lock</h3>
-          <p class="feature__desc" id="featureDesc"></p>
-          <div class="feature__stats" id="featureStats"></div>
-          <div class="feature__cta">
-            <a class="btn btn--primary" id="featurePlay" href="#" target="_blank" rel="noopener"><span>Play Now</span></a>
-            <a class="btn btn--ghost" id="featureDiscord" href="#" target="_blank" rel="noopener"><span>Beyond Lock Discord</span></a>
-          </div>
-        </div>
-        <div class="feature__art">
-          <div class="feature__artFrame">
-            <img id="featureThumb" src="/assets/game-thumb.png" alt="Beyond Lock">
-          </div>
-        </div>
-      </article>
+      <div class="cards" id="goalsRow"></div>
     </div>
   </section>
 
@@ -201,30 +177,67 @@
 
   <div class="divider" aria-hidden="true"><span data-glitch-divider></span></div>
 
-  <!-- ============ 4. FOUNDERS ============ -->
-  <section class="section section--team" id="founders">
+  <!-- ============ 4. FEATURED GAME ============ -->
+  <section class="section" id="featured">
     <div class="wrap">
       <header class="section__head">
         <p class="section__index">04</p>
-        <h2 class="section__title" data-glitch="Founders of the Studio">Founders of the Studio</h2>
-        <p class="section__desc">The founders and leaders shaping Stitchline Interactive.</p>
+        <h2 class="section__title" data-glitch="Featured Game">Featured Game</h2>
       </header>
-      <div class="founders" id="foundersRow"></div>
-      <div class="section__more"><a class="btn btn--ghost" href="/team.html"><span>Meet the full team</span></a></div>
+
+      <article class="feature">
+        <div class="feature__body">
+          <div class="feature__badges">
+            <span class="tag tag--live" id="featureStatus">In Production</span>
+            <span class="tag">Featured Game</span>
+            <span class="tag tag--ghost">Estimated Release: <b id="featureEta">TBA</b></span>
+          </div>
+          <h3 class="feature__name" data-glitch="Beyond Lock">Beyond Lock</h3>
+          <p class="feature__desc" id="featureDesc"></p>
+          <div class="feature__stats" id="featureStats"></div>
+          <div class="feature__cta">
+            <a class="btn btn--primary" id="featurePlay" href="#" target="_blank" rel="noopener"><span>Play Now</span></a>
+            <a class="btn btn--ghost" id="featureDiscord" href="#" target="_blank" rel="noopener"><span>Beyond Lock Discord</span></a>
+          </div>
+        </div>
+        <div class="feature__art">
+          <div class="feature__artFrame">
+            <img id="featureThumb" src="/assets/game-thumb.png" alt="Beyond Lock">
+          </div>
+        </div>
+      </article>
     </div>
   </section>
 
   <div class="divider" aria-hidden="true"><span data-glitch-divider></span></div>
 
-  <!-- ============ 5. GOALS ============ -->
-  <section class="section section--goals" id="goals">
+  <!-- ============ 5. ANNOUNCEMENTS ============ -->
+  <section class="section" id="announcements">
     <div class="wrap">
       <header class="section__head">
         <p class="section__index">05</p>
-        <h2 class="section__title" data-glitch="Our Goals">Our Goals</h2>
-        <p class="section__desc">The commitments we hold ourselves to this year.</p>
+        <h2 class="section__title" data-glitch="Announcements">Announcements</h2>
+        <p class="section__desc">Direct signals from the studio. Each update stays live for 14 days so nothing gets buried.</p>
       </header>
-      <div class="cards" id="goalsRow"></div>
+      <div class="announce" id="announceWrap">
+        <div class="announce__dots" id="announceDots" role="tablist" aria-label="Announcements"></div>
+        <div class="announce__panel" id="announcePanel" role="tabpanel"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider" aria-hidden="true"><span data-glitch-divider></span></div>
+
+  <!-- ============ 6. FOUNDERS ============ -->
+  <section class="section section--team" id="founders">
+    <div class="wrap">
+      <header class="section__head">
+        <p class="section__index">06</p>
+        <h2 class="section__title" data-glitch="Founders of the Studio">Founders of the Studio</h2>
+        <p class="section__desc">The founders and leaders shaping Stitchline Interactive.</p>
+      </header>
+      <div class="founders" id="foundersRow"></div>
+      <div class="section__more"><a class="btn btn--ghost" href="/team.html"><span>Meet the full team</span></a></div>
     </div>
   </section>
 
@@ -239,9 +252,9 @@
     </div>
     <p class="footer__copy">&copy; 2026 Stitchline Interactive. All rights reserved.</p>
     <nav class="footer__links" aria-label="Footer">
-      <button class="footer__link" type="button" data-modal="terms">Terms</button>
       <button class="footer__link" type="button" data-modal="privacy">Privacy</button>
-      <a class="footer__link" href="/contact.html">Suggestions</a>
+      <button class="footer__link" type="button" data-modal="terms">Terms of Service</button>
+      <a class="footer__link" href="/staff.html">Staff</a>
     </nav>
   </div>
 </footer>

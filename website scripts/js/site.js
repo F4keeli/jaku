@@ -157,59 +157,93 @@
      --------------------------------------------------------- */
   function pageGames() {
     var list = SI.$('#gameList');
+    var steamList = SI.$('#steamList');
     var note = SI.$('#gameNote');
+    var tabs = SI.$('#platformTabs');
     if (!list) return;
+
+    function platformOf(game) {
+      var tags = (game.tags || []).map(function (t) { return String(t).toLowerCase(); });
+      if (tags.indexOf('steam') !== -1) return 'steam';
+      return 'roblox';
+    }
+
+    function card(game) {
+      var tags = (game.tags || []).map(function (tag) {
+        return '<span class="tag">' + esc(tag) + '</span>';
+      }).join('');
+      var actions = [];
+      if (game.url) {
+        actions.push('<a class="btn btn--primary" href="' + esc(game.url) + '" target="_blank" rel="noopener">' +
+          '<span>Play now</span></a>');
+      }
+      if (game.discord) {
+        actions.push('<a class="btn btn--ghost" href="' + esc(game.discord) + '" target="_blank" rel="noopener">' +
+          '<span>Discord</span></a>');
+      }
+      var meta = [];
+      if (game.status) meta.push('<span>Status<b>' + esc(game.status) + '</b></span>');
+      if (game.release_estimate) meta.push('<span>Release estimate<b>' + esc(game.release_estimate) + '</b></span>');
+      meta.push('<span>Plays<b>' + (game.plays !== null && game.plays !== undefined && game.plays !== ''
+        ? SI.formatNumber(game.plays) : 'not published') + '</b></span>');
+      return '<article class="game-card reveal' + (game.featured ? ' game-card--featured' : '') +
+          (game.status === 'In Production' ? ' game-card--soon' : '') + '">' +
+        '<div class="game-card__body">' +
+          '<div class="row">' + tags + (game.featured ? '<span class="tag tag--live">Featured</span>' : '') + '</div>' +
+          '<h2 class="game-card__name">' + esc(game.title) + '</h2>' +
+          '<p class="game-card__desc">' + esc(game.description) + '</p>' +
+          '<div class="game-card__meta">' + meta.join('') + '</div>' +
+          sneakpeeks(game) +
+          (actions.length ? '<div class="game-card__actions">' + actions.join('') + '</div>' : '') +
+        '</div>' +
+        '<div class="game-card__art">' +
+          (game.thumb ? '<img src="' + esc(game.thumb) + '" alt="' + esc(game.title) + '" loading="lazy">' : '') +
+        '</div>' +
+      '</article>';
+    }
 
     SI.api.get('/api/site').then(function (data) {
       var games = (data && data.games) || [];
+      var robloxGames = games.filter(function (g) { return platformOf(g) === 'roblox'; });
+      var steamGames = games.filter(function (g) { return platformOf(g) === 'steam'; });
       if (note) {
         var live = games.filter(function (g) { return g.status !== 'Released'; }).length;
         note.textContent = games.length + ' title' + (games.length === 1 ? '' : 's') +
           ' tracked, ' + live + ' still in production.';
       }
-      if (!games.length) {
-        list.innerHTML = SI.empty('No games published yet',
+      if (!robloxGames.length) {
+        list.innerHTML = SI.empty('No Roblox games published yet',
           'Add one from the panel under Leadership › Web Configuration.');
-        return;
+      } else {
+        list.innerHTML = robloxGames.map(card).join('');
       }
-      list.innerHTML = games.map(function (game) {
-        var tags = (game.tags || []).map(function (tag) {
-          return '<span class="tag">' + esc(tag) + '</span>';
-        }).join('');
-        var actions = [];
-        if (game.url) {
-          actions.push('<a class="btn btn--primary" href="' + esc(game.url) + '" target="_blank" rel="noopener">' +
-            '<span>Play now</span></a>');
-        }
-        if (game.discord) {
-          actions.push('<a class="btn btn--ghost" href="' + esc(game.discord) + '" target="_blank" rel="noopener">' +
-            '<span>Discord</span></a>');
-        }
-        var meta = [];
-        if (game.status) meta.push('<span>Status<b>' + esc(game.status) + '</b></span>');
-        if (game.release_estimate) meta.push('<span>Release estimate<b>' + esc(game.release_estimate) + '</b></span>');
-        meta.push('<span>Plays<b>' + (game.plays !== null && game.plays !== undefined && game.plays !== ''
-          ? SI.formatNumber(game.plays) : 'not published') + '</b></span>');
-        return '<article class="game-card reveal' + (game.featured ? ' game-card--featured' : '') +
-            (game.status === 'In Production' ? ' game-card--soon' : '') + '">' +
-          '<div class="game-card__body">' +
-            '<div class="row">' + tags + (game.featured ? '<span class="tag tag--live">Featured</span>' : '') + '</div>' +
-            '<h2 class="game-card__name">' + esc(game.title) + '</h2>' +
-            '<p class="game-card__desc">' + esc(game.description) + '</p>' +
-            '<div class="game-card__meta">' + meta.join('') + '</div>' +
-            sneakpeeks(game) +
-            (actions.length ? '<div class="game-card__actions">' + actions.join('') + '</div>' : '') +
-          '</div>' +
-          '<div class="game-card__art">' +
-            (game.thumb ? '<img src="' + esc(game.thumb) + '" alt="' + esc(game.title) + '" loading="lazy">' : '') +
-          '</div>' +
-        '</article>';
-      }).join('');
-      list.classList.remove('grid');
+      if (steamGames.length) {
+        steamList.innerHTML = steamGames.map(card).join('');
+      } else {
+        steamList.innerHTML = SI.empty('Steam games are coming soon',
+          'The studio\'s first Steam title is in early planning. Check back soon.');
+      }
       SI.observeReveal(list);
+      SI.observeReveal(steamList);
     }).catch(function (err) {
       list.innerHTML = SI.empty('Could not load the games list', err.message);
+      if (steamList) steamList.innerHTML = '';
     });
+
+    if (tabs) {
+      tabs.addEventListener('click', function (event) {
+        var tab = event.target.closest('.tab');
+        if (!tab) return;
+        var key = tab.getAttribute('data-tab');
+        tabs.querySelectorAll('.tab').forEach(function (node) {
+          node.classList.toggle('is-on', node === tab);
+        });
+        var body = tabs.closest('.page__body') || document;
+        body.querySelectorAll('.tabpanel[data-panel]').forEach(function (node) {
+          node.hidden = node.getAttribute('data-panel') !== key;
+        });
+      });
+    }
   }
 
   /* Released sneak peeks, as a disclosure on the card they belong to.

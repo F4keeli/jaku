@@ -134,7 +134,7 @@
           {
             "name": "Literally_blaze",
             "title": "Compliance Officer",
-            "avatar": "",
+            "avatar": "/assets/Blaze.png",
             "blurb": "Supports compliance and studio standards.",
             "discord_id": "1145805274473574470",
             "has_login": false
@@ -153,7 +153,7 @@
           {
             "name": "💜Kitty💜",
             "title": "Project Manager",
-            "avatar": "",
+            "avatar": "/assets/kitty.jpg",
             "blurb": "Coordinates development projects and milestones.",
             "discord_id": "1151815057546694686",
             "has_login": false
@@ -294,21 +294,21 @@
           {
             "name": "Monkey?",
             "title": "Ui Artist",
-            "avatar": "",
+            "avatar": "/assets/Monkey.png",
             "discord_id": "757631816093139076",
             "has_login": false
           },
           {
             "name": "PrismWorks",
             "title": "Gfx Artist",
-            "avatar": "",
+            "avatar": "/assets/Prism.png",
             "discord_id": "1175435363867705414",
             "has_login": false
           },
           {
             "name": "Sou",
             "title": "Sfx Artist",
-            "avatar": "",
+            "avatar": "/assets/Sou.jpg",
             "discord_id": "1126274493497745442",
             "has_login": false
           },

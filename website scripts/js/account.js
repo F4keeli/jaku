@@ -94,6 +94,33 @@
       robloxLink.tabIndex = -1;
       robloxLink.hidden = false;
     }
+
+    var subscription = data.subscription || null;
+    var subscriptionStatus = document.getElementById('subscriptionStatus');
+    var subscriptionList = document.getElementById('accountSubscription');
+    if (subscription && subscription.active) {
+      subscriptionStatus.textContent = 'Active subscription: ' + (subscription.plan || 'Studio supporter') + '.';
+      subscriptionList.innerHTML = item(
+        subscription.plan || 'Studio supporter',
+        (subscription.status || 'active') + ' · renews ' + (subscription.renews_at || '—'),
+        (subscription.benefits || []).join(', ') || 'Supporter benefits',
+        ''
+      );
+    } else {
+      subscriptionStatus.textContent = 'No active subscription.';
+      subscriptionList.innerHTML = '<p class="account-empty">Subscribe through the store to support the studio.</p>';
+    }
+
+    var status = data.status || {};
+    document.getElementById('statusDetails').innerHTML = details([
+      ['Discord', data.discord.id ? 'Verified' : 'Not connected'],
+      ['Roblox', data.roblox ? 'Linked (' + data.roblox.username + ')' : 'Not linked'],
+      ['Email', data.security.email_verified ? 'Verified' : 'Not verified'],
+      ['Staff', data.staff ? data.staff.rank : 'Not a staff account'],
+      ['Subscription', subscription && subscription.active ? 'Active' : 'None'],
+      ['Account status', status.state || 'Good standing']
+    ]);
+
     document.getElementById('securityDetails').innerHTML = details([
       ['Email', data.security.email || 'Not connected'],
       ['Email verification', data.security.email_verified ? 'Verified' : 'Not verified']

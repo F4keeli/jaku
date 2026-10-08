@@ -14,6 +14,8 @@ from typing import Any
 BOT_ID = "community"
 HEARTBEAT_PATH = "/api/bot/heartbeat"
 FULFILLMENT_PATH = "/api/bot/fulfillment"
+RECORDS_PATH = "/api/bot/records"
+SETTINGS_PATH = "/api/bot/settings"
 
 
 def request(method: str, path: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -55,6 +57,28 @@ def request(method: str, path: str, payload: dict[str, Any] | None = None) -> di
 
 def report_heartbeat(payload: dict[str, Any]) -> dict[str, Any]:
     return request("POST", HEARTBEAT_PATH, payload)
+
+
+def bot_settings() -> dict[str, Any]:
+    """Return the shared bot settings the panel configures."""
+    try:
+        result = request("GET", SETTINGS_PATH)
+    except RuntimeError:
+        return {}
+    settings = result.get("settings")
+    return settings if isinstance(settings, dict) else {}
+
+
+def add_record(kind: str, record: dict[str, Any]) -> dict[str, Any] | None:
+    """Append one record to a site moderation collection."""
+    try:
+        result = request(
+            "POST", RECORDS_PATH, {"operation": "add", "kind": kind, "record": record}
+        )
+    except RuntimeError:
+        return None
+    stored = result.get("record")
+    return stored if isinstance(stored, dict) else None
 
 
 def fulfillment_orders() -> list[dict[str, Any]]:
